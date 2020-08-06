@@ -1,3 +1,7 @@
+* {
+  position: relative;
+}
+
 html {
   font-family: ".AppleSystemUIFont", Avenir, "Helvetica Neue", sans-serif;
   font-size: 62.5%;
@@ -6,4 +10,84 @@ html {
 html, body {
   margin: 0;
   padding: 0;
+}
+
+body {
+  padding: 2rem;
+  font-size: 1.6rem;
+}
+
+figure {
+  display: inline-block;
+  margin-left: 0;
+  margin-right: 0;
+  vertical-align: top;
+}
+
+.big-arrow {
+  font-size: 10rem;
+  vertical-align: middle;
+}
+
+#composer,
+#uploader {
+  width: 320px;
+  background: #f3f3f3;
+  border: 2px dashed #ddd;
+  padding: 2rem;
+  border-radius: 1rem;
+}
+
+#composer {
+  width: 704px;
+}
+
+#uploader-input {
+  cursor: pointer;
+}
+
+#composer-img-canvas,
+#uploader-img {
+  display: block;
+  margin: 30px 0;
+  width: 100%;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  border: 1px inset #000;
+}
+
+img, canvas {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+#composer-pic,
+#uploader-pic {
+  display: block;
+}
+
+.checkerboard-bg {
+  background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%),
+  linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%), linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%);
+  background-size: 64px 64px;
+  background-position: 0 0, 0 32px, 32px -32px, -32px 0px;
+}
+
+.with-grid:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  background-image: linear-gradient(0deg, transparent 24%, rgba(255, 0, 255, 0.3) 25%, rgba(255, 0, 255, 0.3) 26%,
+  transparent 27%, transparent 74%, rgba(255, 0, 255, 0.3) 75%, rgba(255, 0, 255, 0.3) 76%, transparent 77%, transparent),
+  linear-gradient(90deg, transparent 24%, rgba(255, 0, 255, 0.3) 25%, rgba(255, 0, 255, 0.3) 26%, transparent 27%,
+          transparent 74%, rgba(255, 0, 255, 0.3) 75%, rgba(255, 0, 255, 0.3) 76%, transparent 77%, transparent);
+  background-size: 128px 128px;
+  background-position: center;
 }
