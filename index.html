@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>godot-autotiler</title>
+    <meta name="description" content="A TileSet Autotile Generator for Godot."/>
+    <link rel="stylesheet" href="app.css"/>
+    <style>
+        * {
+            position: relative;
+        }
+
+        body {
+            padding: 2rem;
+            font-size: 1.6rem;
+        }
+
+        figure {
+            display: inline-block;
+            margin-left: 0;
+            margin-right: 0;
+            vertical-align: top;
+        }
+
+        .big-arrow {
+            font-size: 10rem;
+            vertical-align: middle;
+        }
+
+        #composer,
+        #uploader {
+            width: 320px;
+            background: #f3f3f3;
+            border: 2px dashed #ddd;
+            padding: 2rem;
+            border-radius: 1rem;
+        }
+
+
+        #composer {
+            width: 704px;
+        }
+
+        #uploader-input {
+            cursor: pointer;
+        }
+
+        #composer-img-canvas,
+        #uploader-img {
+            display: block;
+            margin: 30px 0;
+            width: 100%;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+            border: 1px inset #000;
+        }
+
+        img, canvas {
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        #composer-pic,
+        #uploader-pic {
+            display: block;
+        }
+
+        .checkerboard-bg {
+            background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%), linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%);
+            background-size: 64px 64px;
+            background-position: 0 0, 0 32px, 32px -32px, -32px 0px;
+        }
+
+        .with-grid:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            background-image: linear-gradient(0deg, transparent 24%, rgba(255, 0, 255, 0.3) 25%, rgba(255, 0, 255, 0.3) 26%,
+            transparent 27%, transparent 74%, rgba(255, 0, 255, 0.3) 75%, rgba(255, 0, 255, 0.3) 76%, transparent 77%, transparent),
+            linear-gradient(90deg, transparent 24%, rgba(255, 0, 255, 0.3) 25%, rgba(255, 0, 255, 0.3) 26%, transparent 27%,
+                    transparent 74%, rgba(255, 0, 255, 0.3) 75%, rgba(255, 0, 255, 0.3) 76%, transparent 77%, transparent);
+            background-size: 128px 128px;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>godot-autotiler</h1>
+    <p>A TileSet Autotile Generator for Godot.</p>
+</header>
+<main>
+    <hr>
+    <div>
+        Tile Size: <input id="tile_size" type="number" value="16" min="8" max="256" step="8">
+    </div>
+    <hr>
+    <figure id="img-input">
+        <div id="uploader">
+            <p>Input File</p>
+            <picture id="uploader-pic" class="checkerboard-bg with-grid">
+                <img id="uploader-img" src="img/demo-input.png" alt="source"/>
+            </picture>
+            <input id="uploader-input" type="file"/>
+        </div>
+    </figure>
+    <i class="big-arrow">&xrArr;</i>
+    <figure id="img-output">
+        <div id="composer">
+            <p>Generated Output</p>
+            <picture id="composer-pic" class="with-grid checkerboard-bg">
+                <canvas id="composer-img-canvas" width="704" height="320"></canvas>
+            </picture>
+            <a id="downloader-input" href="#" target="_blank">Download</a>
+        </div>
+    </figure>
+    <hr>
+    <picture class="with-grid" style="display: inline-block">
+        <img src="img/demo-output.png" alt="source" width="704"/>
+    </picture>
+</main>
+<footer>
+    Created by <a href="https://route1rodent.com" target="_blank">@route1rodent</a>.
+    <br>
+    <a href="https://github.com/itsjavi/godot-autotiler" target="_blank">Source Code</a>.
+</footer>
+<script src="app.js"></script>
+<script>
+    var $f = function () {
+        var tileSize = 16;
+        var scale = 1;
+        var imageLoader = document.getElementById('uploader-input');
+        var imageDownloader = document.getElementById('downloader-input');
+        var $img = document.getElementById('uploader-img');
+        imageLoader.addEventListener('change', handleImage, false);
+        $img.addEventListener('click', function (e) {
+            imageLoader.click();
+        }, false);
+        document.getElementById('tile_size').addEventListener('change', function (e) {
+            tileSize = this.value;
+            console.log(tileSize);
+            generateCanvasImg();
+        }, false);
+
+        var canvas = document.getElementById("composer-img-canvas");
+        var ctx = canvas.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
+        ctx.scale(scale, scale);
+        $img.addEventListener("load", function (e) {
+            generateCanvasImg();
+            console.log("autotile generated");
+        }, false);
+
+        function drawCell(sx, sy, dx, dy) {
+            ctx.drawImage(
+                $img,
+                sx * tileSize, sy * tileSize, tileSize, tileSize,
+                dx * tileSize, dy * tileSize, tileSize, tileSize
+            );
+            ctx.save();
+        }
+
+        function drawCellSlice(size, sx, sy, dx, dy) {
+            ctx.drawImage(
+                $img,
+                sx * tileSize, sy * tileSize, size, size,
+                dx * tileSize, dy * tileSize, size, size
+            );
+            ctx.save();
+        }
+
+        function handleImage(e) {
+            $img.setAttribute("src", "");
+            if (e.target.files.length > 0) {
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    $img.setAttribute('src', event.target.result);
+                }
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        }
+
+        function downloadImage(e) {
+
+        }
+
+        function generateCanvasImg() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.width = (88 * (tileSize / 8)) * scale;
+            ctx.height = (40 * (tileSize / 8)) * scale;
+
+            drawCell(0, 0, 0, 0);
+            drawCell(1, 0, 1, 0);
+            drawCell(2, 0, 2, 0);
+
+            drawCell(0, 1, 0, 1);
+            drawCell(1, 1, 1, 1);
+            drawCell(2, 1, 2, 1);
+
+            drawCell(0, 2, 0, 2);
+            drawCell(1, 2, 1, 2);
+            drawCell(2, 2, 2, 2);
+
+
+            drawCellSlice(tileSize / 2, 0, 0, 0, 3);
+            drawCellSlice(tileSize / 2, 1, 0, 0.5, 3);
+            drawCellSlice(tileSize / 2, 1, 0, 1, 3);
+            drawCellSlice(tileSize / 2, 1, 0, 1.5, 3);
+            drawCellSlice(tileSize / 2, 1, 0, 2, 3);
+            drawCellSlice(tileSize / 2, 2.5, 0, 2.5, 3);
+
+            drawCellSlice(tileSize / 2, 0, 2.5, 0, 3.5);
+            drawCellSlice(tileSize / 2, 1, 2.5, 0.5, 3.5);
+            drawCellSlice(tileSize / 2, 1, 2.5, 1, 3.5);
+            drawCellSlice(tileSize / 2, 1, 2.5, 1.5, 3.5);
+            drawCellSlice(tileSize / 2, 1, 2.5, 2, 3.5);
+            drawCellSlice(tileSize / 2, 2.5, 2.5, 2.5, 3.5);
+
+
+            drawCellSlice(tileSize / 2, 0, 0, 3, 3);
+            drawCellSlice(tileSize / 2, 2.5, 0, 3.5, 3);
+            drawCellSlice(tileSize / 2, 0, 2.5, 3, 3.5);
+            drawCellSlice(tileSize / 2, 2.5, 2.5, 3.5, 3.5);
+
+
+            drawCellSlice(tileSize / 2, 0, 0, 3, 0);
+            drawCellSlice(tileSize / 2, 2.5, 0, 3.5, 0);
+
+
+            drawCellSlice(tileSize / 2, 0, 0.5, 3, 0.5);
+            drawCellSlice(tileSize / 2, 2.5, 0.5, 3.5, 0.5);
+            drawCellSlice(tileSize / 2, 0, 0.5, 3, 1);
+            drawCellSlice(tileSize / 2, 2.5, 0.5, 3.5, 1);
+            drawCellSlice(tileSize / 2, 0, 0.5, 3, 1.5);
+            drawCellSlice(tileSize / 2, 2.5, 0.5, 3.5, 1.5);
+            drawCellSlice(tileSize / 2, 0, 0.5, 3, 2);
+            drawCellSlice(tileSize / 2, 2.5, 0.5, 3.5, 2);
+            drawCellSlice(tileSize / 2, 0, 2.5, 3, 2.5);
+            drawCellSlice(tileSize / 2, 2.5, 2.5, 3.5, 2.5);
+
+            ///
+
+            drawCell(0, 0, 4, 0);
+            drawCell(1, 0, 5, 0);
+            drawCell(1, 0, 6, 0);
+            drawCell(2, 0, 7, 0);
+
+            drawCell(0, 1, 4, 1);
+            drawCell(1, 1, 5, 1);
+            drawCell(1, 1, 6, 1);
+            drawCell(2, 1, 7, 1);
+
+            drawCell(0, 1, 4, 2);
+            drawCell(1, 1, 5, 2);
+            drawCell(1, 1, 6, 2);
+            drawCell(2, 1, 7, 2);
+
+            drawCell(0, 2, 4, 3);
+            drawCell(1, 2, 5, 3);
+            drawCell(1, 2, 6, 3);
+            drawCell(2, 2, 7, 3);
+
+            ///
+
+
+            drawCell(0, 1, 4, 4);
+            drawCell(1, 1, 5, 4);
+            drawCell(1, 1, 6, 4);
+            drawCell(2, 1, 7, 4);
+
+            drawCell(1, 1, 8, 4);
+
+            ///
+
+            imageDownloader.href = canvas.toDataURL();
+        }
+
+        generateCanvasImg();
+    }
+    document.addEventListener("DOMContentLoaded", $f);
+</script>
+</body>
+</html>

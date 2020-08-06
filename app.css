@@ -1,0 +1,9 @@
+html {
+  font-family: ".AppleSystemUIFont", Avenir, "Helvetica Neue", sans-serif;
+  font-size: 62.5%;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
