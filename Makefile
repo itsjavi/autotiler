@@ -1,10 +1,16 @@
 default: build
 
+clean:
+	rm -rf dist/*
+
 start:
 	npm start
 
 build:
 	npm run dist
+	sleep 1
+	rm -rf dist/autotiler-mac.app
+	cp -r dist/mac/Autotiler.app dist/autotiler-mac.app
 
 version-major:
 	npm version major

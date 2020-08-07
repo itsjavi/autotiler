@@ -15,6 +15,7 @@ const execHandler = (error, stdout, stderr) => {
     console.log(`stdout: ${stdout}`);
 };
 
-exec(`butler publish ${distDir}/Autotiler-${pkg.version}-mac.dmg ${pkg.butler.project}:osx-universal`, execHandler);
-exec(`butler publish ${distDir}/Autotiler-${pkg.version}-win.exe ${pkg.butler.project}:win`, execHandler);
-exec(`butler publish ${distDir}/Autotiler-${pkg.version}-linux.AppImage ${pkg.butler.project}:linux-universal`, execHandler);
+//exec(`butler push ${distDir}/autotiler-mac.dmg ${pkg.butler.project}:macos-universal --userversion ${pkg.version}`, execHandler);
+exec(`butler push ${distDir}/autotiler-mac.app ${pkg.butler.project}:macos-universal --userversion ${pkg.version}`, execHandler);
+exec(`butler push ${distDir}/autotiler-win.exe ${pkg.butler.project}:windows --userversion ${pkg.version}`, execHandler);
+exec(`butler push ${distDir}/autotiler-linux.AppImage ${pkg.butler.project}:linux-universal --userversion ${pkg.version}`, execHandler);

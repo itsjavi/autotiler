@@ -24,7 +24,7 @@
     "appId": "com.route1rodent.autotiler",
     "productName": "Autotiler",
     "copyright": "Copyright © 2020, ${author}",
-    "artifactName": "${productName}-${version}-${os}.${ext}",
+    "artifactName": "${name}-${os}.${ext}",
     "directories": {
       "buildResources": "img"
     },
