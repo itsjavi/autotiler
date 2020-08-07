@@ -1,18 +1,38 @@
 {
-  "name": "godot-autotiler",
+  "name": "autotiler",
   "version": "1.0.0",
   "main": "main.js",
   "private": true,
   "scripts": {
     "start": "electron .",
-    "start-web": "python -m SimpleHTTPServer"
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder -mwl",
+    "postinstall": "electron-builder install-app-deps"
   },
-  "author": "route1rodent",
+  "author": "route1rodent <route1rodent@itsjavi.com>",
   "devDependencies": {
-    "electron": "^9.1.2"
+    "electron": "^9.1.2",
+    "electron-builder": "^22.8.0"
   },
   "dependencies": {
-    "electron-canvas-to-buffer": "^2.0.0",
     "open": "^7.1.0"
+  },
+  "build": {
+    "appId": "com.route1rodent.autotiler",
+    "productName": "Autotiler",
+    "copyright": "Copyright © 2020, ${author}",
+    "directories": {
+      "buildResources": "img"
+    },
+    "files": ["**/*","img/*"],
+    "mac": {
+      "category": "public.app-category.graphics-design"
+    },
+    "win": {
+      "target": "portable"
+    },
+    "linux": {
+
+    }
   }
 }

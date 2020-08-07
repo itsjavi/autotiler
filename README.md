@@ -14,9 +14,9 @@ resource with configured collisions and bitmask ready to be used in Godot.
 - Supports any tile size (multiples of 8)
 
 ## Planned features
-- Auto-detect tile size when changing image.
+- DONE - Auto-detect tile size when changing image.
 - Drag and drop input image.
-- Generate output in same page.
+- DONE - Generate output in same page.
 - Export to Godot (Collisions and Bitmap).
 - Zoom change.
 - Preview Mode layers:
@@ -30,7 +30,7 @@ resource with configured collisions and bitmask ready to be used in Godot.
     - Edit Godot icon.
 - App exports for MacOS, Windows and Linux (Debian).
 - Examples for 24-px and 32-px tiles.
-- Support for Wang autotiles.
+- Support for Wang autotiles (reverse Blob to Wang)
 
 ## Unsupported
 

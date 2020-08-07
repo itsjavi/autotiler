@@ -60,6 +60,7 @@ var $f = function () {
                 detectTileSize();
             }
             inputFileName = e.target.files[0].name;
+            document.title = 'Autotiler - ' + inputFileName;
             reader.readAsDataURL(e.target.files[0]);
             $btnSaveImage.disabled = false;
         }

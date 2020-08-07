@@ -8,7 +8,7 @@ function createWindow() {
     const mainWindow = new BrowserWindow({
         darkTheme: true,
         width: 920,
-        height: 640,
+        height: 560,
         webPreferences: {
             preload: path.join(__dirname, 'app.js'),
             //nodeIntegration: true
