@@ -1,15 +1,48 @@
 * {
   position: relative;
+  box-sizing: border-box;
 }
 
 html {
   font-family: ".AppleSystemUIFont", Avenir, "Helvetica Neue", sans-serif;
   font-size: 62.5%;
+  background: #333B4F;
 }
 
 html, body {
   margin: 0;
   padding: 0;
+  color:#CCCED3;
+}
+
+body {
+  /*border: 1px solid #191D27;*/
+  padding:20px;
+  /*background: #333B4F;*/
+}
+main {
+  border: 2px solid #191D27;
+  background: #262C3B;
+  border-radius: 6px;
+  padding: 20px;
+}
+header,
+footer {
+  padding: 20px 10px;
+}
+header p {
+  margin-top: 40px;
+}
+hr {
+  border-color: #191D27;
+  margin: 20px 0;
+}
+footer {
+  margin: 20px 0;
+}
+
+a, a:hover, a:visited {
+  color: #699ce8;
 }
 
 body {
@@ -17,29 +50,24 @@ body {
   font-size: 1.6rem;
 }
 
+h1 img {
+  height: 32px;
+  vertical-align: bottom;
+  margin-right: 4px;
+}
+
 figure {
   display: inline-block;
   margin-left: 0;
   margin-right: 0;
   vertical-align: top;
+  font-weight: bold;
 }
 
 .big-arrow {
-  font-size: 10rem;
-  vertical-align: middle;
-}
-
-#composer,
-#uploader {
-  width: 320px;
-  background: #f3f3f3;
-  border: 2px dashed #ddd;
-  padding: 2rem;
-  border-radius: 1rem;
-}
-
-#composer {
-  width: 704px;
+  width: 140px;
+  display: block;
+  top: 25%;
 }
 
 #uploader-input {
@@ -90,4 +118,48 @@ img, canvas {
           transparent 74%, rgba(255, 0, 255, 0.3) 75%, rgba(255, 0, 255, 0.3) 76%, transparent 77%, transparent);
   background-size: 128px 128px;
   background-position: center;
+}
+
+.flex {
+  display: flex;
+  align-items: stretch;
+  align-content: center;
+}
+
+.flex > * {
+  /*background: #699ce8;*/
+  vertical-align: middle;
+}
+
+.flex > figure {
+  background: #4f5667;
+  /*border: 1px dashed #CCCED3;*/
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 5px 5px 0 #191D27;
+}
+
+#uploader-img {
+  width: 320px;
+}
+#composer-img-canvas {
+  width: 704px;
+}
+
+input {
+  background: #191D27;
+  color: #fff;
+  padding: 5px;
+  border: 1px solid #111;
+  border-radius: 4px;
+}
+
+input:focus{
+  border-color: #fcc751;
+  outline: none;
+}
+input[type=file] {
+  display: block;
+  width: 100%;
+  margin-right: 10px;
 }

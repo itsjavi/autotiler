@@ -3,46 +3,51 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>godot-autotiler</title>
-    <meta name="description" content="A TileSet Autotile Generator for Godot."/>
+    <title>Godot Autotiler - TileSet Generator</title>
+    <meta name="description" content="An autotile tileset generator with Godot export support."/>
+    <link rel="icon" type="image/png" href="img/favicon.png" />
     <link rel="stylesheet" href="app.css"/>
 </head>
 <body>
 <header>
-    <h1>godot-autotiler</h1>
-    <p>A TileSet Autotile Generator for Godot.</p>
+    <h1><img src="img/favicon.png" /> Godot Autotiler</h1>
+    <p>An autotile tileset generator with Godot export support.</p>
 </header>
 <main>
-    <hr>
     <div>
         Tile Size: <input id="tile_size" type="number" value="16" min="8" max="256" step="8">
     </div>
     <hr>
-    <figure id="img-input">
-        <div id="uploader">
-            <p>Input File</p>
-            <picture id="uploader-pic" class="checkerboard-bg with-grid">
-                <img id="uploader-img" src="img/demo-input.png" alt="source"/>
-            </picture>
-            <input id="uploader-input" type="file"/>
-        </div>
-    </figure>
-    <i class="big-arrow">&xrArr;</i>
-    <figure id="img-output">
-        <div id="composer">
-            <p>Output Preview</p>
-            <picture id="composer-pic" class="with-grid checkerboard-bg">
-                <canvas id="composer-img-canvas" width="704" height="320"></canvas>
-            </picture>
-            <input id="downloader-input" type="button" value="Generate"/>
-        </div>
-    </figure>
-    <hr>
+    <div class="flex">
+        <figure id="img-input">
+            <div id="uploader" role="button">
+                <p>Input File</p>
+                <picture id="uploader-pic" class="checkerboard-bg with-grid">
+                    <img id="uploader-img" src="img/demo-input.png" alt="source"/>
+                </picture>
+                <input id="uploader-input" type="file"/>
+            </div>
+        </figure>
+        <div><img class="big-arrow" src="img/arrow.png" /></div>
+        <figure id="img-output">
+            <div id="composer">
+                <p>Preview</p>
+                <picture id="composer-pic" class="with-grid checkerboard-bg">
+                    <canvas id="composer-img-canvas" width="704" height="320"></canvas>
+                </picture>
+    <!--            <input id="downloader-input" type="button" value="Generate"/>-->
+
+                <p>Output</p>
+                <div id="img-output-generated"></div>
+            </div>
+        </figure>
+    </div>
 </main>
 <footer>
-    Created by <a href="https://route1rodent.com" target="_blank">@route1rodent</a>.
-    <br>
-    <a href="https://github.com/itsjavi/godot-autotiler" target="_blank">Source Code</a>.
+    Created by <a href="https://route1rodent.com" target="_blank">@route1rodent</a>
+<!--    <br>-->
+<!--    <br>-->
+<!--    <a href="https://github.com/itsjavi/godot-autotiler" target="_blank">Source Code</a>-->
 </footer>
 <script src="app.js"></script>
 </body>

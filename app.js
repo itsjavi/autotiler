@@ -1,18 +1,19 @@
-
 var $f = function () {
     var tileSize = 16;
     var scale = 4;
     var imageLoader = document.getElementById('uploader-input');
-    var imageDownloader = document.getElementById('downloader-input');
+    // var imageDownloader = document.getElementById('downloader-input');
     var $img = document.getElementById('uploader-img');
+    var $imgOut = document.getElementById('img-output-generated');
+    var $tileSizeInput = document.getElementById('tile_size');
     imageLoader.addEventListener('change', handleImage, false);
-    imageDownloader.addEventListener('click', downloadImage, false);
+    // imageDownloader.addEventListener('click', downloadImage, false);
     $img.addEventListener('click', function (e) {
         imageLoader.click();
     }, false);
-    document.getElementById('tile_size').addEventListener('change', function (e) {
+    $tileSizeInput.addEventListener('change', function (e) {
         tileSize = this.value;
-        console.log(tileSize);
+        console.log("New tile size is: " + tileSize);
         generateCanvasImg();
     }, false);
 
@@ -22,7 +23,6 @@ var $f = function () {
     ctx.scale(scale, scale);
     $img.addEventListener("load", function (e) {
         generateCanvasImg();
-        console.log("autotile generated");
     }, false);
 
     function drawCell(sx, sy, dx, dy) {
@@ -49,8 +49,22 @@ var $f = function () {
             var reader = new FileReader();
             reader.onload = function (event) {
                 $img.setAttribute('src', event.target.result);
+                detectTileSize();
             }
             reader.readAsDataURL(e.target.files[0]);
+        }
+    }
+
+    function detectTileSize() {
+        var tmpIm = new Image();
+        tmpIm.src = $img.src;
+        tmpIm.onload = function (e) {
+            var newTileSize = Math.floor(tmpIm.width / 5);
+            if (newTileSize === tileSize) {
+                return;
+            }
+            $tileSizeInput.value = Math.floor(tmpIm.width / 5);
+            $tileSizeInput.dispatchEvent(new Event('change'))
         }
     }
 
@@ -61,11 +75,22 @@ var $f = function () {
             var canvas2 = document.createElement("canvas");
             var ctx2 = canvas2.getContext("2d");
             ctx2.imageSmoothingEnabled = false;
+            // ctx2.width = ctx2.width / scale;
+            // ctx2.height = ctx2.height / scale;
+            ctx2.width = canvas.width / scale;
+            ctx2.height = canvas.height / scale;
+            canvas2.width = canvas.width / scale;
+            canvas2.height = canvas.height / scale;
             ctx2.scale(1 / scale, 1 / scale);
             ctx2.drawImage(im, 0, 0);
 
-            document.body.innerHTML = ('<img src="' + canvas2.toDataURL() + '" />' +
-                '<br><br><a href="javascript:window.location.reload();">&xlArr; Back</a>');
+            var newIm = new Image();
+            newIm.src = canvas2.toDataURL();
+            // document.body.appendChild(canvas2);
+            $imgOut.innerHTML = '';
+            $imgOut.appendChild(newIm);
+            // document.body.app = ('<img src="' + canvas2.toDataURL() + '" />' +
+            //     '<br><br><a href="javascript:window.location.reload();">&xlArr; Back</a>');
         }
     }
 
@@ -230,6 +255,7 @@ var $f = function () {
         drawCellSlice(tileSize / 2, 4, 1, 10, 2);
 
         ctx.save();
+        downloadImage();
     }
 
     generateCanvasImg();
