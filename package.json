@@ -5,11 +5,14 @@
   "private": true,
   "scripts": {
     "start": "electron .",
-    "pack": "electron-builder --dir",
     "dist": "electron-builder -mwl",
     "postinstall": "electron-builder install-app-deps"
   },
   "author": "route1rodent <route1rodent@itsjavi.com>",
+  "homepage": "https://route1rodent.itch.io/autotiler",
+  "butler": {
+    "project": "route1rodent/autotiler"
+  },
   "devDependencies": {
     "electron": "^9.1.2",
     "electron-builder": "^22.8.0"
@@ -21,18 +24,23 @@
     "appId": "com.route1rodent.autotiler",
     "productName": "Autotiler",
     "copyright": "Copyright © 2020, ${author}",
+    "artifactName": "${productName}-${version}-${os}.${ext}",
     "directories": {
       "buildResources": "img"
     },
-    "files": ["**/*","img/*"],
+    "files": [
+      "**/*",
+      "img/*"
+    ],
     "mac": {
-      "category": "public.app-category.graphics-design"
+      "category": "public.app-category.graphics-design",
+      "target": "dmg"
     },
     "win": {
       "target": "portable"
     },
     "linux": {
-
+      "target": "AppImage"
     }
   }
 }

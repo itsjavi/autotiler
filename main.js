@@ -9,10 +9,12 @@ function createWindow() {
         darkTheme: true,
         width: 920,
         height: 560,
+        useContentSize: true,
         webPreferences: {
             preload: path.join(__dirname, 'app.js'),
             //nodeIntegration: true
-        }
+        },
+        icon: path.join(__dirname, '/img/Icon-512x512.png')
     })
 
     mainWindow.setResizable(false)
@@ -23,6 +25,10 @@ function createWindow() {
 
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
+
+    // Remove menu bar
+    mainWindow.removeMenu()
+    mainWindow.sele
 }
 
 // This method will be called when Electron has finished

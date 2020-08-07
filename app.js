@@ -2,8 +2,10 @@ var fs = require('fs');
 const dialog = require('electron').remote.dialog;
 const util = require('util');
 const writeFile = util.promisify(fs.writeFile);
+const pkg = require('./package.json');
 
 var $f = function () {
+    document.getElementById('app-version').innerText = 'v' + pkg.version;
     var inputFileName = 'demo.png';
     var tileSize = 16;
     var scale = 4;

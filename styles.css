@@ -20,6 +20,7 @@ body {
     /*border: 1px solid #191D27;*/
     /*background: #333B4F;*/
     padding: 20px;
+    user-select: none;
 }
 
 main {
@@ -184,6 +185,10 @@ input, button {
     min-height: 32px;
     text-align: center;
     vertical-align: center;
+}
+
+input {
+    user-select: auto;
 }
 
 input:focus, button:focus {
