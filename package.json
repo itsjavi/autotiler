@@ -1,5 +1,18 @@
 {
+  "name": "godot-autotiler",
+  "version": "1.0.0",
+  "main": "main.js",
+  "private": true,
   "scripts": {
-    "start": "python -m SimpleHTTPServer"
+    "start": "electron .",
+    "start-web": "python -m SimpleHTTPServer"
+  },
+  "author": "route1rodent",
+  "devDependencies": {
+    "electron": "^9.1.2"
+  },
+  "dependencies": {
+    "electron-canvas-to-buffer": "^2.0.0",
+    "open": "^7.1.0"
   }
 }

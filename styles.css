@@ -1,0 +1,212 @@
+* {
+    position: relative;
+    box-sizing: border-box;
+}
+
+html {
+    font-family: ".AppleSystemUIFont", Avenir, "Helvetica Neue", sans-serif;
+    font-size: 62.5%;
+    background: #333B4F;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    color: #CCCED3;
+    overflow: hidden;
+}
+
+body {
+    /*border: 1px solid #191D27;*/
+    /*background: #333B4F;*/
+    padding: 20px;
+}
+
+main {
+    padding: 0 10px;
+}
+
+h1, h2 {
+    margin-top: 0;
+    padding: 0;
+}
+
+header,
+footer {
+    padding: 20px 10px;
+}
+
+header {
+    padding-top: 10px;
+}
+
+header p {
+    margin-top: 40px;
+}
+
+hr {
+    border-color: #191D27;
+    margin: 15px 0;
+}
+
+footer {
+    padding: 20px 0;
+    font-size: 1.3rem;
+    text-align: center;
+}
+
+footer i {
+    font-style: normal;
+    margin: 0 10px;
+}
+
+a, a:hover, a:visited {
+    color: #699ce8;
+}
+
+body {
+    padding: 2rem;
+    font-size: 1.6rem;
+}
+
+h1 img,
+h2 img {
+    height: 32px;
+    vertical-align: bottom;
+    margin-right: 4px;
+}
+
+figure {
+    display: inline-block;
+    margin-left: 0;
+    margin-right: 0;
+    vertical-align: top;
+    font-weight: bold;
+}
+
+.big-arrow {
+    width: 140px;
+    display: block;
+    top: 25%;
+}
+
+#uploader-input {
+    cursor: pointer;
+}
+
+img, canvas {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+#composer-pic,
+#uploader-pic {
+    display: block;
+}
+
+.checkerboard-bg {
+    background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%), linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%);
+    background-size: 64px 64px;
+    background-position: 0 0, 0 32px, 32px -32px, -32px 0px;
+}
+
+.with-grid:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    background-image: linear-gradient(0deg, transparent 24%, rgba(255, 0, 255, 0.3) 25%, rgba(255, 0, 255, 0.3) 26%,
+    transparent 27%, transparent 74%, rgba(255, 0, 255, 0.3) 75%, rgba(255, 0, 255, 0.3) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(255, 0, 255, 0.3) 25%, rgba(255, 0, 255, 0.3) 26%, transparent 27%,
+            transparent 74%, rgba(255, 0, 255, 0.3) 75%, rgba(255, 0, 255, 0.3) 76%, transparent 77%, transparent);
+    background-size: 128px 128px;
+    background-position: center;
+}
+
+.flex {
+    display: flex;
+    align-items: stretch;
+    align-content: center;
+}
+
+.flex > * {
+    /*background: #699ce8;*/
+    vertical-align: middle;
+}
+
+.flex > figure {
+    background: #4f5667;
+    /*border: 1px dashed #CCCED3;*/
+    padding: 2rem;
+    /*border-radius: 1rem;*/
+    box-shadow: 5px 5px 0 #191D27;
+}
+
+figure picture {
+    display: inline-block;
+    margin: 30px 0;
+    border: 1px inset #000;
+    min-height: 160px;
+    overflow: hidden;
+}
+
+figure picture img,
+figure picture canvas {
+    margin: 0;
+    display: inline-block;
+}
+
+#uploader-img {
+    min-height: 96px;
+    max-width: 240px;
+}
+
+#uploader-pic {
+    cursor: pointer;
+}
+
+#composer-img-canvas {
+    width: 352px;
+}
+
+input, button {
+    background: #262C3B;
+    color: #CCCED3;
+    padding: 6px 9px;
+    border: 1px solid #111;
+    min-height: 32px;
+    text-align: center;
+    vertical-align: center;
+}
+
+input:focus, button:focus {
+    border-color: #CCCED3;
+    outline: none;
+}
+
+input:active, button:active {
+    border-color: #fcc751;
+}
+
+button:disabled, button:active:disabled {
+    color: #4f5667;
+    border: 1px solid #111;
+}
+
+button {
+    cursor: pointer;
+}
+
+input[type=file] {
+    display: block;
+    width: 100%;
+    margin-right: 10px;
+    padding: 5px 9px;
+}

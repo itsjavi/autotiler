@@ -1,16 +1,24 @@
+var fs = require('fs');
+const dialog = require('electron').remote.dialog;
+const util = require('util');
+const writeFile = util.promisify(fs.writeFile);
+
 var $f = function () {
+    var inputFileName = 'demo.png';
     var tileSize = 16;
     var scale = 4;
     var imageLoader = document.getElementById('uploader-input');
     // var imageDownloader = document.getElementById('downloader-input');
     var $img = document.getElementById('uploader-img');
     var $imgOut = document.getElementById('img-output-generated');
+    var $btnSaveImage = document.getElementById('btn-save-image');
     var $tileSizeInput = document.getElementById('tile_size');
     imageLoader.addEventListener('change', handleImage, false);
     // imageDownloader.addEventListener('click', downloadImage, false);
-    $img.addEventListener('click', function (e) {
+    document.getElementById('uploader-pic').addEventListener('click', function (e) {
         imageLoader.click();
     }, false);
+    $btnSaveImage.addEventListener('click', saveCanvasImage, false);
     $tileSizeInput.addEventListener('change', function (e) {
         tileSize = this.value;
         console.log("New tile size is: " + tileSize);
@@ -51,7 +59,9 @@ var $f = function () {
                 $img.setAttribute('src', event.target.result);
                 detectTileSize();
             }
+            inputFileName = e.target.files[0].name;
             reader.readAsDataURL(e.target.files[0]);
+            $btnSaveImage.disabled = false;
         }
     }
 
@@ -69,29 +79,34 @@ var $f = function () {
     }
 
     function downloadImage(e) {
-        var im = new Image();
-        im.src = canvas.toDataURL();
-        im.onload = function () {
-            var canvas2 = document.createElement("canvas");
-            var ctx2 = canvas2.getContext("2d");
-            ctx2.imageSmoothingEnabled = false;
-            // ctx2.width = ctx2.width / scale;
-            // ctx2.height = ctx2.height / scale;
-            ctx2.width = canvas.width / scale;
-            ctx2.height = canvas.height / scale;
-            canvas2.width = canvas.width / scale;
-            canvas2.height = canvas.height / scale;
-            ctx2.scale(1 / scale, 1 / scale);
-            ctx2.drawImage(im, 0, 0);
+        var newIm = new Image();
+        newIm.src = createOutputCanvas().toDataURL();
+        newIm.id = 'img-output-generated-img';
+        // document.body.appendChild(canvas2);
+        $imgOut.innerHTML = '';
+        $imgOut.appendChild(newIm);
+        // document.body.app = ('<img src="' + canvas2.toDataURL() + '" />' +
+        //     '<br><br><a href="javascript:window.location.reload();">&xlArr; Back</a>');
+        $imgOut.addEventListener("click", saveCanvasImage)
+    }
 
-            var newIm = new Image();
-            newIm.src = canvas2.toDataURL();
-            // document.body.appendChild(canvas2);
-            $imgOut.innerHTML = '';
-            $imgOut.appendChild(newIm);
-            // document.body.app = ('<img src="' + canvas2.toDataURL() + '" />' +
-            //     '<br><br><a href="javascript:window.location.reload();">&xlArr; Back</a>');
-        }
+    /**
+     * @returns {HTMLCanvasElement}
+     */
+    function createOutputCanvas() {
+        var canvas2 = document.createElement("canvas");
+        var ctx2 = canvas2.getContext("2d");
+        ctx2.imageSmoothingEnabled = false;
+        // ctx2.width = ctx2.width / scale;
+        // ctx2.height = ctx2.height / scale;
+        ctx2.width = canvas.width / scale;
+        ctx2.height = canvas.height / scale;
+        canvas2.width = canvas.width / scale;
+        canvas2.height = canvas.height / scale;
+        ctx2.scale(1 / scale, 1 / scale);
+        ctx2.drawImage(canvas, 0, 0);
+
+        return canvas2;
     }
 
     function generateCanvasImg() {
@@ -255,9 +270,57 @@ var $f = function () {
         drawCellSlice(tileSize / 2, 4, 1, 10, 2);
 
         ctx.save();
-        downloadImage();
+        // downloadImage();
     }
 
-    generateCanvasImg();
+    function saveCanvasImage() {
+        dialog.showSaveDialog(
+            {title: 'Save generated image', defaultPath: inputFileName.replace(/\.([^.]+)/, '-autotile.$1')},
+        ).then(file => {
+            // Stating whether dialog operation was cancelled or not.
+            if (!file.canceled) {
+                console.log(file.filePath.toString());
+                saveImg(file.filePath.toString());
+            } else {
+                console.log("save canceled");
+            }
+        });
+    }
+
+    function readBlobAsUint8Array(blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                return new Uint8Array(reader.result);
+            };
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(blob);
+        });
+    }
+
+    /**
+     *
+     * @param {HTMLCanvasElement} canv
+     * @returns {Promise<string[]>}
+     */
+    function getCanvasAsBlob(canv) {
+        return new Promise((resolve) => {
+            canv.toBlob(resolve, "image/png");
+        });
+    }
+
+    async function saveCanvasAsPng(filename, canv) {
+        const blob = await getCanvasAsBlob(canv);
+        const data = await readBlobAsUint8Array(blob);
+        await writeFile(filename, data);
+    }
+
+    function saveImg(filename) {
+        const dataUrl = createOutputCanvas().toDataURL();
+        const uu = dataUrl.substring('data:image/png;base64,'.length);
+        fs.writeFileSync(filename, uu, 'base64');
+    }
+
+    // generateCanvasImg();
 }
 document.addEventListener("DOMContentLoaded", $f);
