@@ -1,4 +1,5 @@
 var fs = require('fs');
+var path = require('path');
 const dialog = require('electron').remote.dialog;
 const util = require('util');
 const writeFile = util.promisify(fs.writeFile);
@@ -14,6 +15,7 @@ var $f = function () {
     var $img = document.getElementById('uploader-img');
     var $imgOut = document.getElementById('img-output-generated');
     var $btnSaveImage = document.getElementById('btn-save-image');
+    var $btnGodotExport = document.getElementById('btn-export-godot');
     var $tileSizeInput = document.getElementById('tile_size');
     imageLoader.addEventListener('change', handleImage, false);
     // imageDownloader.addEventListener('click', downloadImage, false);
@@ -21,6 +23,7 @@ var $f = function () {
         imageLoader.click();
     }, false);
     $btnSaveImage.addEventListener('click', saveCanvasImage, false);
+    $btnGodotExport.addEventListener('click', saveGodotExport, false);
     $tileSizeInput.addEventListener('change', function (e) {
         tileSize = this.value;
         console.log("New tile size is: " + tileSize);
@@ -65,6 +68,7 @@ var $f = function () {
             document.title = 'Autotiler - ' + inputFileName;
             reader.readAsDataURL(e.target.files[0]);
             $btnSaveImage.disabled = false;
+            $btnGodotExport.disabled = false;
         }
     }
 
@@ -276,6 +280,20 @@ var $f = function () {
         // downloadImage();
     }
 
+    function saveGodotExport() {
+        dialog.showSaveDialog(
+            {title: 'Export as Godot 3.x resource', defaultPath: inputFileName.replace(/\.([^.]+)/, '-autotile.$1')},
+        ).then(file => {
+            // Stating whether dialog operation was cancelled or not.
+            if (!file.canceled) {
+                console.log(file.filePath.toString());
+                saveGodotResources(file.filePath.toString());
+            } else {
+                console.log("save canceled");
+            }
+        });
+    }
+
     function saveCanvasImage() {
         dialog.showSaveDialog(
             {title: 'Save generated image', defaultPath: inputFileName.replace(/\.([^.]+)/, '-autotile.$1')},
@@ -318,12 +336,64 @@ var $f = function () {
         await writeFile(filename, data);
     }
 
-    function saveImg(filename) {
+    function getImageBinaryData() {
         const dataUrl = createOutputCanvas().toDataURL();
-        const uu = dataUrl.substring('data:image/png;base64,'.length);
-        fs.writeFileSync(filename, uu, 'base64');
+        return dataUrl.substring('data:image/png;base64,'.length);
     }
 
-    // generateCanvasImg();
+    function saveImg(filename) {
+        const imgBase64 = getImageBinaryData();
+        fs.writeFileSync(filename, imgBase64, 'base64');
+    }
+
+    function getFileExtension(filename) {
+        let ext = filename.split('.').pop()
+        if (filename === ext) {
+            return ''
+        }
+        return '.' + ext
+    }
+
+    function replaceTemplateVars(template, varsObj) {
+        let contents = template
+        const keys = Object.keys(varsObj)
+        for (const i in keys) {
+            const key = keys[i]
+            const value = varsObj[key]
+            contents = contents.replace(new RegExp('\\$' + key, 'g'), value)
+        }
+
+        return contents
+    }
+
+    function generateGodotResources(filename, tilesize) {
+        const baseFilename = path.basename(filename)
+        const baseFilenameNoExt = path.basename(filename, getFileExtension(filename))
+        let importFileData = fs.readFileSync('./resources/templates/tileset.png.import', "utf8")
+        let tresFileData = fs.readFileSync('./resources/templates/tileset.tres', "utf8")
+        const tplVars = {
+            TS: tilesize,
+            IMGW: tilesize * 12,
+            IMGH: tilesize * 4,
+            IMGFILE: baseFilename
+        }
+
+        importFileData = replaceTemplateVars(importFileData, tplVars)
+        tresFileData = replaceTemplateVars(tresFileData, tplVars)
+
+        return [
+            {file: baseFilename + '.import', content: importFileData},
+            {file: baseFilenameNoExt + '.tres', content: tresFileData},
+        ]
+    }
+
+    function saveGodotResources(filename) {
+        const destDir = path.dirname(filename)
+        saveImg(filename)
+        const godotResources = generateGodotResources(filename, tileSize)
+        godotResources.forEach(function (res) {
+            fs.writeFileSync(path.join(destDir, res.file), res.content);
+        })
+    }
 }
 document.addEventListener("DOMContentLoaded", $f);
