@@ -27,5 +27,7 @@ version: version-minor
 release: build
 	node publish.js
 
+publish: release
+
 $(V).SILENT:
 .PHONY: docs tests test build dist
