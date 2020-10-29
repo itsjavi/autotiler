@@ -22,7 +22,7 @@ version-patch:
 	npm version patch
 
 version-fix: version-patch
-version: version-patch
+version: version-minor
 
 release: build
 	node publish.js

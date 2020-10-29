@@ -17,7 +17,7 @@ resource with configured collisions and bitmask ready to be used in Godot.
 - DONE - Auto-detect tile size when changing image.
 - Drag and drop input image.
 - DONE - Generate output in same page.
-- Export to Godot (Collisions and Bitmap).
+- DONE - Export to Godot (Collisions and Bitmap).
 - Zoom change.
 - Preview Mode layers:
     - Grid
@@ -28,7 +28,7 @@ resource with configured collisions and bitmask ready to be used in Godot.
 - Edit Mode:
     - Edit collisions and bitmasks on the canvas (rects and triangles).
     - Edit Godot icon.
-- App exports for MacOS, Windows and Linux (Debian).
+- DONE - App exports for MacOS, Windows and Linux (Debian).
 - Examples for 24-px and 32-px tiles.
 - Support for Wang autotiles (reverse Blob to Wang)
 

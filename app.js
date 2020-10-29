@@ -375,15 +375,24 @@ var $f = function () {
         return contents
     }
 
+    function getGodotExportFullDir(filename) {
+        return path.join(path.dirname(filename), getGodotExportBasename(filename))
+    }
+
+    function getGodotExportBasename(filename) {
+        return path.join(path.basename(filename, getFileExtension(filename)))
+    }
+
     function generateGodotResources(filename, tilesize) {
         const baseFilename = path.basename(filename)
-        const baseFilenameNoExt = path.basename(filename, getFileExtension(filename))
+        const baseFilenameNoExt = getGodotExportBasename(filename)
         let importFileData = fs.readFileSync('./resources/templates/tileset.png.import', "utf8")
         let tresFileData = fs.readFileSync('./resources/templates/tileset.tres', "utf8")
         const tplVars = {
             TS: tilesize,
             IMGW: tilesize * tileCountX,
             IMGH: tilesize * tileCountY,
+            IMGFILEPATH: path.join(baseFilenameNoExt, baseFilename),
             IMGFILE: baseFilename
         }
 
@@ -397,9 +406,16 @@ var $f = function () {
     }
 
     function saveGodotResources(filename) {
-        const destDir = path.dirname(filename)
-        saveImg(filename)
+        const destDir = getGodotExportFullDir(filename)
+
         const godotResources = generateGodotResources(filename, tileSize)
+
+        if (!fs.existsSync(destDir)) {
+            fs.mkdirSync(destDir)
+            console.log(destDir)
+        }
+
+        saveImg(path.join(destDir, path.basename(filename)))
         godotResources.forEach(function (res) {
             fs.writeFileSync(path.join(destDir, res.file), res.content);
         })
