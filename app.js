@@ -9,7 +9,7 @@ var $f = function () {
     document.getElementById('app-version').innerText = 'v' + pkg.version;
     var inputFileName = 'demo.png';
     var tileSize = 16;
-    var scale = 4;
+    var scale = 1;
     var imageLoader = document.getElementById('uploader-input');
     // var imageDownloader = document.getElementById('downloader-input');
     var $img = document.getElementById('uploader-img');
@@ -76,12 +76,12 @@ var $f = function () {
         var tmpIm = new Image();
         tmpIm.src = $img.src;
         tmpIm.onload = function (e) {
-            var newTileSize = Math.floor(tmpIm.width / 5);
-            if (newTileSize === tileSize) {
-                return;
-            }
+            // if (newTileSize === tileSize) {
+            //     return;
+            // }
             $tileSizeInput.value = Math.floor(tmpIm.width / 5);
             $tileSizeInput.dispatchEvent(new Event('change'))
+            $img.dispatchEvent(new Event('loaded'))
         }
     }
 
@@ -116,10 +116,19 @@ var $f = function () {
         return canvas2;
     }
 
+    const tileCountX = 11
+    const tileCountY = 5
+
     function generateCanvasImg() {
+        canvas.width = (tileSize * tileCountX)
+        canvas.height = (tileSize * tileCountY)
+        ctx.width = canvas.width
+        ctx.height = canvas.height
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.width = (88 * (tileSize / 8)) * scale;
-        ctx.height = (40 * (tileSize / 8)) * scale;
+        // ctx.width = (88 * (tileSize / 8)) * scale;
+        // ctx.height = (40 * (tileSize / 8)) * scale;
+
 
         drawCell(0, 0, 0, 0);
         drawCell(1, 0, 1, 0);
@@ -373,8 +382,8 @@ var $f = function () {
         let tresFileData = fs.readFileSync('./resources/templates/tileset.tres', "utf8")
         const tplVars = {
             TS: tilesize,
-            IMGW: tilesize * 12,
-            IMGH: tilesize * 4,
+            IMGW: tilesize * tileCountX,
+            IMGH: tilesize * tileCountY,
             IMGFILE: baseFilename
         }
 
