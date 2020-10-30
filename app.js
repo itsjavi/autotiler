@@ -1,9 +1,18 @@
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
 const dialog = require('electron').remote.dialog;
 const util = require('util');
 const writeFile = util.promisify(fs.writeFile);
 const pkg = require('./package.json');
+const open = require('open')
+
+const unhandled = require('electron-unhandled');
+unhandled({
+    showDialog: true,
+    reportButton: error => {
+        open(pkg.homepage);
+    }
+});
 
 var $f = function () {
     document.getElementById('app-version').innerText = 'v' + pkg.version;

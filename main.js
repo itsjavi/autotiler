@@ -28,7 +28,6 @@ function createWindow() {
 
     // Remove menu bar
     mainWindow.removeMenu()
-    mainWindow.sele
 }
 
 // This method will be called when Electron has finished
