@@ -16,6 +16,10 @@ unhandled({
 
 var $f = function () {
     document.getElementById('app-version').innerText = 'v' + pkg.version;
+    const resourcesDir = path.join(__dirname, 'resources', 'templates')
+    const inputTileCountX = 5
+    const tileCountX = 11
+    const tileCountY = 5
     var inputFileName = 'demo.png';
     var tileSize = 16;
     var scale = 1;
@@ -88,7 +92,7 @@ var $f = function () {
             // if (newTileSize === tileSize) {
             //     return;
             // }
-            $tileSizeInput.value = Math.floor(tmpIm.width / 5);
+            $tileSizeInput.value = Math.floor(tmpIm.width / inputTileCountX);
             $tileSizeInput.dispatchEvent(new Event('change'))
             $img.dispatchEvent(new Event('loaded'))
         }
@@ -124,9 +128,6 @@ var $f = function () {
 
         return canvas2;
     }
-
-    const tileCountX = 11
-    const tileCountY = 5
 
     function generateCanvasImg() {
         canvas.width = (tileSize * tileCountX)
@@ -395,13 +396,13 @@ var $f = function () {
     function generateGodotResources(filename, tilesize) {
         const baseFilename = path.basename(filename)
         const baseFilenameNoExt = getGodotExportBasename(filename)
-        let importFileData = fs.readFileSync('./resources/templates/tileset.png.import', "utf8")
-        let tresFileData = fs.readFileSync('./resources/templates/tileset.tres', "utf8")
+        let importFileData = fs.readFileSync(path.join(resourcesDir, 'tileset.png.import'), "utf8")
+        let tresFileData = fs.readFileSync(path.join(resourcesDir, 'tileset.tres'), "utf8")
         const tplVars = {
             TS: tilesize,
             IMGW: tilesize * tileCountX,
             IMGH: tilesize * tileCountY,
-            IMGFILEPATH: path.join(baseFilenameNoExt, baseFilename),
+            IMGFILEPATH: (baseFilenameNoExt + '/' + baseFilename),
             IMGFILE: baseFilename
         }
 
