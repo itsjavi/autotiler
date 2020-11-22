@@ -1,4 +1,4 @@
-# Godot Autotiler
+# Autotiler
 
 An autotile tileset generator with Godot export support.
 
