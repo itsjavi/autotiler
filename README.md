@@ -1,6 +1,6 @@
 # Autotiler
 
-An autotile tileset generator with Godot export support.
+Autotile tileset generator application with Godot export support.
 
 Generates a full autotile tileset using a 15-tile image, including a
 resource with configured collisions and bitmask ready to be used in Godot.
@@ -13,7 +13,7 @@ resource with configured collisions and bitmask ready to be used in Godot.
 - Supports any tile size (multiples of 8)
 - Godot Tileset resource export with configured region, bitmask, collisions and icon.
 
-For roadmap and suggestions please [use this thread](https://github.com/itsjavi/godot-autotiler/issues/1).
+For roadmap and suggestions please [use this thread](https://github.com/itsjavi/autotiler/issues/1).
 
 
 ## Usage
