@@ -194,10 +194,7 @@ Vector2( 9, 1 ), 254,
 Vector2( 9, 2 ), 442,
 Vector2( 9, 3 ), 190,
 Vector2( 10, 2 ), 250,
-Vector2( 10, 3 ), 187,
-Vector2( 11, 0 ), 442,
-Vector2( 11, 1 ), 443,
-Vector2( 11, 2 ), 154 ]
+Vector2( 10, 3 ), 187]
 1/autotile/icon_coordinate = Vector2( 3, 3 )
 1/autotile/tile_size = Vector2( $TS, $TS )
 1/autotile/spacing = 0
