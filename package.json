@@ -21,10 +21,19 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "golden:update": "node scripts/update-golden.ts",
-    "check": "pnpm fmt:check && pnpm lint && pnpm typecheck && pnpm test"
+    "check": "pnpm fmt:check && pnpm lint && pnpm typecheck && pnpm test",
+    "tauri": "tauri",
+    "desktop:dev": "tauri dev",
+    "desktop:build": "tauri build"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
+    "@tauri-apps/api": "^2.11.1",
+    "@tauri-apps/plugin-dialog": "~2.7.3",
+    "@tauri-apps/plugin-fs": "~2.5.2",
+    "@tauri-apps/plugin-opener": "~2.5.5",
+    "@tauri-apps/plugin-store": "~2.4.5",
+    "@tauri-apps/plugin-window-state": "~2.4.1",
     "fast-png": "^8.0.0",
     "fflate": "^0.8.3",
     "lucide-react": "^1.48.0",
@@ -35,6 +44,7 @@
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@tailwindcss/vite": "^4.3.3",
+    "@tauri-apps/cli": "^2.11.5",
     "@types/node": "^24.12.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

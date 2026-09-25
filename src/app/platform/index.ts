@@ -1,3 +1,5 @@
+import { isTauri } from "@tauri-apps/api/core";
+
 import type { Platform } from "./types.ts";
 import { webPlatform } from "./web.ts";
 
@@ -11,6 +13,6 @@ export function platform(): Platform {
 
 /** Swaps in the desktop implementation when running inside Tauri (loaded lazily so the web build stays lean). */
 export async function initPlatform(): Promise<Platform> {
-  current = webPlatform;
+  current = isTauri() ? (await import("./tauri.ts")).tauriPlatform : webPlatform;
   return current;
 }

@@ -64,13 +64,16 @@ export async function exportNow(options: { quiet?: boolean } = {}): Promise<bool
   const bundle = buildExport(source, tileset, settings);
   try {
     const result = await platform().save(bundle.files, bundle.zipName, outputFolder);
+    if (!result) return false; // dialog cancelled
+    if (result.folder) useApp.getState().setOutputFolder(result.folder);
+    const folderPath = result.folder?.path ?? outputFolder?.path;
     const files = bundle.files.map((f) => f.path).join(", ");
     const tip =
       settings.target === "godot4" && !settings.forceNearest
         ? " For crisp pixels in Godot: Project Settings → Rendering → Textures → Default Texture Filter = Nearest."
         : "";
     const p = platform();
-    const where = outputFolder?.path;
+    const where = folderPath;
     notify(
       options.quiet
         ? `Re-exported ${bundle.name}`

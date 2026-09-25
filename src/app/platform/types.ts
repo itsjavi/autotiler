@@ -22,6 +22,8 @@ export interface SaveResult {
   readonly kind: "downloaded" | "written";
   /** file or folder the user will find the result in */
   readonly where: string;
+  /** a folder the user picked during this save, worth remembering for the next export */
+  readonly folder?: OutputFolder;
 }
 
 export interface Platform {
@@ -36,7 +38,8 @@ export interface Platform {
   subscribeNativeDrop?: (onFile: (file: SourceFile) => void, onHover: (over: boolean) => void) => Promise<() => void>;
   watch: (file: SourceFile, onChange: (file: SourceFile) => void) => (() => void) | null;
   pickOutputFolder: () => Promise<OutputFolder | null>;
-  save: (files: readonly ExportFile[], zipName: string, folder: OutputFolder | null) => Promise<SaveResult>;
+  /** null when the user cancelled a dialog */
+  save: (files: readonly ExportFile[], zipName: string, folder: OutputFolder | null) => Promise<SaveResult | null>;
   /** res:// path of `folder` when it is inside a Godot project */
   godotPathOf: (folder: OutputFolder) => Promise<string | null>;
   reveal?: (path: string) => Promise<void>;

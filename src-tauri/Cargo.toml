@@ -1,0 +1,35 @@
+[package]
+name = "autotiler"
+version = "2.0.0"
+description = "Autotile tileset generator with Godot 4, Tiled and dual-grid export"
+authors = ["route1rodent <route1rodent@itsjavi.com>"]
+license = "MIT"
+repository = "https://github.com/itsjavi/autotiler"
+edition = "2021"
+rust-version = "1.77.2"
+
+[lib]
+name = "autotiler_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.6", features = [] }
+
+[dependencies]
+# >= 2.11.6: IPC security fix (GHSA-w28w-mhc8-qvjv). Plugin crates must match the npm packages' major.minor.
+tauri = { version = "2.11.6", features = [] }
+tauri-plugin-dialog = "2.7"
+tauri-plugin-fs = { version = "2.5", features = ["watch"] }
+tauri-plugin-opener = "2.5"
+tauri-plugin-persisted-scope = "2.3"
+tauri-plugin-store = "2.4"
+tauri-plugin-window-state = "2.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true
