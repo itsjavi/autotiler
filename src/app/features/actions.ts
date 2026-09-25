@@ -1,10 +1,21 @@
 // App-level actions shared by buttons, keyboard shortcuts, drag & drop, paste and live reload.
-import { encodePng, getTemplate, renderGuide, type TemplateId } from "../../core/index.ts";
+import {
+  autotiler13,
+  encodePng,
+  getTemplate,
+  renderGuide,
+  repackTemplate,
+  rpgmakerA2,
+  type ExportFile,
+  type TemplateId,
+} from "../../core/index.ts";
 import { notify } from "../components/toasts.tsx";
 import { platform, type SourceFile } from "../platform/index.ts";
-import { tilesetOf } from "../state/derived.ts";
+import { baseName, tilesetOf } from "../state/derived.ts";
 import { useApp } from "../state/store.ts";
 import { buildExport, pngOf, targetSupports } from "./export/build.ts";
+
+const messageOf = (err: unknown) => (err instanceof Error ? err.message : String(err));
 
 export interface Example {
   readonly file: string;
@@ -29,7 +40,33 @@ export async function openFile(): Promise<void> {
     const file = await platform().openImage();
     if (file) loadSource(file);
   } catch (err) {
-    notify("Couldn't open the file", err instanceof Error ? err.message : String(err), { type: "error" });
+    notify("Couldn't open the file", messageOf(err), { type: "error" });
+  }
+}
+
+/** The file name part of a path (either separator). */
+export const fileNameOf = (path: string): string => path.split(/[\\/]/).pop() ?? path;
+
+export async function openRecent(path: string): Promise<void> {
+  const open = platform().openPath;
+  if (!open) return;
+  try {
+    loadSource(await open(path));
+  } catch (err) {
+    useApp.setState((s) => ({ recent: s.recent.filter((r) => r !== path) }));
+    notify(`Couldn't open ${fileNameOf(path)}`, messageOf(err), { type: "error" });
+  }
+}
+
+/** Reopens the file of the last session (desktop); silently skipped when it moved or was deleted. */
+export async function restoreLastFile(path: string | null): Promise<void> {
+  const open = platform().openPath;
+  if (!path || !open || useApp.getState().source) return;
+  try {
+    const file = await open(path);
+    if (!useApp.getState().source) useApp.getState().loadFile(file);
+  } catch {
+    // gone or no longer readable: start empty
   }
 }
 
@@ -40,7 +77,7 @@ export async function openExample(example: Example): Promise<void> {
     useApp.getState().setSettings({ templateId: "auto", tileSize: null });
     loadSource({ name: example.file, bytes: new Uint8Array(await res.arrayBuffer()) });
   } catch (err) {
-    notify("Couldn't load the example", err instanceof Error ? err.message : String(err), { type: "error" });
+    notify("Couldn't load the example", messageOf(err), { type: "error" });
   }
 }
 
@@ -68,10 +105,11 @@ export async function exportNow(options: { quiet?: boolean } = {}): Promise<bool
     if (result.folder) useApp.getState().setOutputFolder(result.folder);
     const folderPath = result.folder?.path ?? outputFolder?.path;
     const files = bundle.files.map((f) => f.path).join(", ");
-    const tip =
-      settings.target === "godot4" && !settings.forceNearest
-        ? " For crisp pixels in Godot: Project Settings → Rendering → Textures → Default Texture Filter = Nearest."
-        : "";
+    const showTip = settings.target === "godot4" && !settings.forceNearest && !settings.filterTipShown;
+    if (showTip) useApp.getState().setSettings({ filterTipShown: true });
+    const tip = showTip
+      ? " For crisp pixels in Godot: Project Settings → Rendering → Textures → Default Texture Filter = Nearest (or turn on “Force nearest filtering”)."
+      : "";
     const p = platform();
     const where = folderPath;
     notify(
@@ -91,7 +129,7 @@ export async function exportNow(options: { quiet?: boolean } = {}): Promise<bool
     );
     return true;
   } catch (err) {
-    notify("Export failed", err instanceof Error ? err.message : String(err), { type: "error" });
+    notify("Export failed", messageOf(err), { type: "error" });
     return false;
   }
 }
@@ -104,19 +142,37 @@ export async function copyPng(): Promise<void> {
     await platform().copyPng(pngOf(tileset));
     notify("Copied the tileset image", "Paste it into Aseprite or any image editor.", { type: "success" });
   } catch (err) {
-    notify("Couldn't copy the image", err instanceof Error ? err.message : String(err), { type: "error" });
+    notify("Couldn't copy the image", messageOf(err), { type: "error" });
+  }
+}
+
+/** Saves one image through a save dialog (desktop) or as a download (web). */
+async function saveImage(file: ExportFile, what: string): Promise<void> {
+  try {
+    const result = await platform().save([file], file.path, null);
+    if (result?.kind === "written") notify(`Saved the ${what}`, result.where, { type: "success" });
+  } catch (err) {
+    notify(`Couldn't save the ${what}`, messageOf(err), { type: "error" });
   }
 }
 
 export async function saveGuide(templateId: TemplateId, tileSize: number): Promise<void> {
-  const template = getTemplate(templateId);
-  const png = encodePng(renderGuide(template, tileSize));
-  const name = `${templateId}-guide-${tileSize}px.png`;
-  try {
-    await platform().save([{ path: name, data: png }], name, null);
-  } catch (err) {
-    notify("Couldn't save the template", err instanceof Error ? err.message : String(err), { type: "error" });
-  }
+  const png = encodePng(renderGuide(getTemplate(templateId), tileSize));
+  await saveImage({ path: `${templateId}-guide-${tileSize}px.png`, data: png }, "blank template");
+}
+
+/** The other template kind: 13-tile ⇄ RPG Maker A2. */
+export const counterpartOf = (id: TemplateId) => (id === "rpgmaker-a2" ? autotiler13 : rpgmakerA2);
+
+/** Saves the source rearranged into the other template layout (e.g. to reuse the art in RPG Maker). */
+export async function saveConverted(): Promise<void> {
+  const { source, settings } = useApp.getState();
+  const analysis = source ? tilesetOf(source, settings).analysis : null;
+  if (!source || !analysis?.template || !analysis.tileSize) return;
+  const to = counterpartOf(analysis.template.id);
+  const png = encodePng(repackTemplate(source.image, analysis.template, to, analysis.tileSize));
+  const suffix = to.id === "rpgmaker-a2" ? "a2" : "13tile";
+  await saveImage({ path: `${baseName(source)}-${suffix}.png`, data: png }, `${to.name} template`);
 }
 
 export async function chooseOutputFolder(): Promise<void> {

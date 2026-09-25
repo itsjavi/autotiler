@@ -37,7 +37,7 @@ export function TestMapView() {
 
   if (!tileset || !image) {
     return (
-      <section aria-label="Test map" className="flex flex-1 items-center justify-center p-6 text-sm text-muted">
+      <section className="flex flex-1 items-center justify-center p-6 text-sm text-muted">
         {result?.error ?? "Open a template to paint with its tileset."}
       </section>
     );
@@ -47,7 +47,7 @@ export function TestMapView() {
   const combos = () => setMap(dual ? allDualCombinations() : allBlobCombinations(8));
 
   return (
-    <section aria-label="Test map" className="flex min-h-0 flex-1 flex-col">
+    <section className="flex min-h-0 flex-1 flex-col">
       <div className="flex h-10 shrink-0 items-center gap-1 border-b border-line px-2">
         <Button size="sm" variant="ghost" onClick={() => setMap(emptyMap())}>
           <Eraser className="size-3.5" /> Clear

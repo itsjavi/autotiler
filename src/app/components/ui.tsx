@@ -6,7 +6,16 @@ import { Toggle } from "@base-ui/react/toggle";
 import { ToggleGroup } from "@base-ui/react/toggle-group";
 import { Tooltip } from "@base-ui/react/tooltip";
 import { Check, ChevronDown } from "lucide-react";
-import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode } from "react";
+import {
+  createContext,
+  use,
+  useId,
+  useMemo,
+  type ButtonHTMLAttributes,
+  type InputHTMLAttributes,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 
 import { cn } from "../lib/cn.ts";
 
@@ -71,21 +80,47 @@ export function Tip({ content, children }: { content: ReactNode; children: React
   );
 }
 
+/** Ids that tie a field's label and hint to its control (a native `<label for>` can't name every control). */
+interface FieldIds {
+  readonly control: string;
+  readonly label: string;
+  readonly hint: string | undefined;
+}
+
+const FieldContext = createContext<FieldIds | null>(null);
+
 export function Field({ label, hint, children }: { label: ReactNode; hint?: ReactNode; children: ReactNode }) {
+  const id = useId();
+  const hasHint = !!hint;
+  const ids = useMemo<FieldIds>(
+    () => ({ control: `${id}c`, label: `${id}l`, hint: hasHint ? `${id}h` : undefined }),
+    [id, hasHint],
+  );
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-xs font-medium text-muted">{label}</span>
-      {children}
-      {hint ? <span className="text-[11px] leading-snug text-muted/80">{hint}</span> : null}
-    </div>
+    <FieldContext value={ids}>
+      <div className="flex flex-col gap-1">
+        <label id={ids.label} htmlFor={ids.control} className="text-xs font-medium text-muted">
+          {label}
+        </label>
+        {children}
+        {hint ? (
+          <span id={ids.hint} className="text-[11px] leading-snug text-muted">
+            {hint}
+          </span>
+        ) : null}
+      </div>
+    </FieldContext>
   );
 }
 
 export function TextInput({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
+  const field = use(FieldContext);
   return (
     <input
+      id={field?.control}
+      aria-describedby={field?.hint}
       className={cn(
-        "h-8 w-full rounded-md border border-line bg-field px-2 text-sm text-ink placeholder:text-muted/60 hover:border-line-strong",
+        "h-8 w-full rounded-md border border-line bg-field px-2 text-sm text-ink placeholder:text-muted hover:border-line-strong",
         focus,
         className,
       )}
@@ -112,6 +147,7 @@ export function SelectInput<T extends string>({
   onChange: (v: T) => void;
   label: string;
 }) {
+  const field = use(FieldContext);
   return (
     <Select.Root
       items={options.map((o) => ({ value: o.value, label: o.label }))}
@@ -122,7 +158,10 @@ export function SelectInput<T extends string>({
       }}
     >
       <Select.Trigger
-        aria-label={label}
+        id={field?.control}
+        aria-label={field ? undefined : label}
+        aria-labelledby={field?.label}
+        aria-describedby={field?.hint}
         className={cn(
           "flex h-8 w-full items-center justify-between gap-2 rounded-md border border-line bg-field pr-1.5 pl-2 text-left text-sm text-ink hover:border-line-strong",
           focus,
@@ -172,9 +211,12 @@ export function Segmented<T extends string>({
   onChange: (v: T) => void;
   label: string;
 }) {
+  const field = use(FieldContext);
   return (
     <ToggleGroup
-      aria-label={label}
+      aria-label={field ? undefined : label}
+      aria-labelledby={field?.label}
+      aria-describedby={field?.hint}
       value={[value]}
       onValueChange={(v) => {
         const hit = options.find((o) => o.value === v[0]);
@@ -213,13 +255,23 @@ export function SwitchInput({
   hint?: ReactNode;
   disabled?: boolean;
 }) {
+  const id = useId();
   return (
     <label className={cn("flex items-start justify-between gap-3", disabled && "opacity-45")}>
       <span className="flex flex-col">
-        <span className="text-sm text-ink">{label}</span>
-        {hint ? <span className="text-[11px] leading-snug text-muted">{hint}</span> : null}
+        <span id={`${id}l`} className="text-sm text-ink">
+          {label}
+        </span>
+        {hint ? (
+          <span id={`${id}h`} className="text-[11px] leading-snug text-muted">
+            {hint}
+          </span>
+        ) : null}
       </span>
+      {/* Base UI renders a <span role="switch">, which a wrapping <label> doesn't name */}
       <Switch.Root
+        aria-labelledby={`${id}l`}
+        aria-describedby={hint ? `${id}h` : undefined}
         checked={checked}
         onCheckedChange={onChange}
         disabled={disabled}

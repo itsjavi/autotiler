@@ -40,6 +40,8 @@ export const tauriPlatform: Platform = {
     return typeof path === "string" ? readSource(path) : null;
   },
 
+  openPath: readSource,
+
   fileFromDataTransfer: async (dt) => {
     const file = dt.files[0];
     return file ? { name: file.name, bytes: new Uint8Array(await file.arrayBuffer()) } : null;

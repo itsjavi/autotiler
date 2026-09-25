@@ -1,8 +1,12 @@
 import { describe, expect, test } from "vitest";
 
+import { readFixture } from "../../../tests/helpers.ts";
 import { BLOB47 } from "../blob/mask.ts";
 import { CORNERS, PIECE_KINDS, pieceKind } from "../blob/quarters.ts";
-import { autotiler13, rpgmakerA2, TEMPLATES } from "./index.ts";
+import { generate } from "../generate.ts";
+import { diffImages } from "../image/rgba.ts";
+import { godot12x4 } from "../layouts/index.ts";
+import { autotiler13, repackTemplate, rpgmakerA2, TEMPLATES } from "./index.ts";
 
 describe.each(TEMPLATES.map((t) => [t.id, t] as const))("%s", (_, template) => {
   test("every blob quarter is sampled from a quarter holding the right piece at the same corner", () => {
@@ -53,5 +57,22 @@ describe("autotiler-13", () => {
 describe("rpgmaker-a2", () => {
   test("the palette thumbnail is never read", () => {
     for (const corner of CORNERS) expect(rpgmakerA2.pieceAt(0, 0, corner)).toBeNull();
+  });
+});
+
+describe("repackTemplate", () => {
+  test("13-tile → A2 matches the research A2 fixture and generates the same tileset", () => {
+    const t13 = readFixture("inputs/holes-16.png");
+    const a2 = repackTemplate(t13, autotiler13, rpgmakerA2, 16);
+    expect(diffImages(a2, readFixture("inputs/a2-holes-16.png")).count).toBe(0);
+    const fromA2 = generate(a2, { template: rpgmakerA2, tileSize: 16, layout: godot12x4 }).image;
+    const from13 = generate(t13, { template: autotiler13, tileSize: 16, layout: godot12x4 }).image;
+    expect(diffImages(fromA2, from13).count).toBe(0);
+  });
+
+  test("A2 → 13-tile → A2 round-trips", () => {
+    const a2 = readFixture("inputs/a2-demo-16.png");
+    const back = repackTemplate(repackTemplate(a2, rpgmakerA2, autotiler13, 16), autotiler13, rpgmakerA2, 16);
+    expect(diffImages(back, a2).count).toBe(0);
   });
 });

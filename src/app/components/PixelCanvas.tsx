@@ -1,7 +1,15 @@
 // Crisp pixel-art display. Every image pixel covers a whole number of *device* pixels, so art stays sharp even at
 // fractional display scaling (125 %, 150 % …). Pixels are only drawn here — never read back — so the canvas can't
 // alter them.
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CanvasHTMLAttributes,
+  type PointerEvent as ReactPointerEvent,
+  type RefObject,
+} from "react";
 
 import type { RgbaImage } from "../../core/index.ts";
 import { cn } from "../lib/cn.ts";
@@ -22,7 +30,10 @@ export interface CanvasPointer {
   readonly altKey: boolean;
 }
 
-interface Props {
+type Props = Pick<
+  CanvasHTMLAttributes<HTMLCanvasElement>,
+  "tabIndex" | "onKeyDown" | "onFocus" | "onBlur" | "aria-describedby"
+> & {
   image: RgbaImage;
   /** CSS pixels per image pixel (integer); the backing store rounds it to whole device pixels */
   zoom: number;
@@ -30,7 +41,7 @@ interface Props {
   onPointer?: (p: CanvasPointer | null, type: "down" | "move" | "up" | "leave") => void;
   className?: string;
   label: string;
-}
+};
 
 function useDevicePixelRatio(): number {
   const [dpr, setDpr] = useState(() => window.devicePixelRatio || 1);
@@ -43,7 +54,7 @@ function useDevicePixelRatio(): number {
   return dpr;
 }
 
-export function PixelCanvas({ image, zoom, overlay, onPointer, className, label }: Props) {
+export function PixelCanvas({ image, zoom, overlay, onPointer, className, label, ...rest }: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
   const dpr = useDevicePixelRatio();
   const scale = Math.max(1, Math.round(zoom * dpr));
@@ -84,6 +95,7 @@ export function PixelCanvas({ image, zoom, overlay, onPointer, className, label 
 
   return (
     <canvas
+      {...rest}
       ref={ref}
       // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- a canvas has no <img> equivalent; role + label name it
       role="img"

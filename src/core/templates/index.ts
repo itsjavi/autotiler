@@ -2,6 +2,7 @@ import { autotiler13 } from "./autotiler13.ts";
 import { rpgmakerA2 } from "./rpgmaker-a2.ts";
 import type { Template, TemplateId } from "./types.ts";
 
+export { repackTemplate } from "./repack.ts";
 export type { QuarterRef, Template, TemplateId, TemplateSlot } from "./types.ts";
 export { autotiler13, rpgmakerA2 };
 

@@ -49,6 +49,8 @@ export interface Settings {
   zoom: number | "fit";
   mapZoom: number | "fit";
   overlays: Overlays;
+  /** the Godot texture-filter tip is shown once, after the first Godot 4 export */
+  filterTipShown: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -66,6 +68,7 @@ export const DEFAULT_SETTINGS: Settings = {
   zoom: "fit",
   mapZoom: "fit",
   overlays: { grid: true, quarters: false, bits: false, collision: false },
+  filterTipShown: false,
 };
 
 export const MAP_WIDTH = 32;
@@ -85,6 +88,7 @@ interface AppState {
   /** hovered tileset cell (atlas coordinates) */
   hover: { x: number; y: number } | null;
   map: TestMap;
+  /** absolute paths of recently opened files, newest first (desktop only) */
   recent: string[];
 
   loadFile: (file: SourceFile, reason?: "open" | "reload") => boolean;
@@ -95,6 +99,7 @@ interface AppState {
   setView: (view: View) => void;
   setHover: (cell: { x: number; y: number } | null) => void;
   setMap: (map: TestMap) => void;
+  clearRecent: () => void;
 }
 
 let revision = 0;
@@ -114,12 +119,12 @@ export const useApp = create<AppState>()((set, get) => ({
   loadFile: (file, reason = "open") => {
     try {
       const image = decodePng(file.bytes);
-      const recent = [file.location ?? file.name, ...get().recent.filter((r) => r !== (file.location ?? file.name))];
+      const path = file.location;
       set({
         source: { file, image, revision: ++revision, reason },
         loadError: null,
         hover: reason === "open" ? null : get().hover,
-        recent: recent.slice(0, 8),
+        ...(path && reason === "open" ? { recent: [path, ...get().recent.filter((r) => r !== path)].slice(0, 8) } : {}),
       });
       return true;
     } catch (err) {
@@ -144,6 +149,7 @@ export const useApp = create<AppState>()((set, get) => ({
   setView: (view) => set({ view }),
   setHover: (hover) => set({ hover }),
   setMap: (map) => set({ map }),
+  clearRecent: () => set({ recent: [] }),
 }));
 
 // ---- persistence (settings, recent files, desktop output folder, test map) ----
@@ -153,13 +159,16 @@ interface Persisted {
   recent?: string[];
   outputFolder?: { label: string; path: string } | null;
   map?: { width: number; height: number; cells: string };
+  /** the file that was open when the app quit (desktop), reopened on the next launch */
+  lastFile?: string | null;
 }
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null;
 }
 
-export async function hydrate(): Promise<void> {
+/** Restores the persisted state; returns the file to reopen, if any. */
+export async function hydrate(): Promise<{ lastFile: string | null }> {
   const raw: unknown = await platform().loadState();
   const data: Persisted = isRecord(raw) ? raw : {};
   const settings: Settings = { ...DEFAULT_SETTINGS, ...(isRecord(data.settings) ? data.settings : {}) };
@@ -188,6 +197,7 @@ export async function hydrate(): Promise<void> {
   if (platform().kind === "desktop" && folder?.path) {
     useApp.getState().setOutputFolder({ label: folder.label, path: folder.path, ref: folder.path });
   }
+  return { lastFile: typeof data.lastFile === "string" && platform().openPath ? data.lastFile : null };
 }
 
 let saveTimer: ReturnType<typeof setTimeout> | undefined;
@@ -197,7 +207,8 @@ useApp.subscribe((state, prev) => {
     state.settings === prev.settings &&
     state.recent === prev.recent &&
     state.outputFolder === prev.outputFolder &&
-    state.map === prev.map
+    state.map === prev.map &&
+    state.source?.file.location === prev.source?.file.location
   ) {
     return;
   }
@@ -213,6 +224,7 @@ useApp.subscribe((state, prev) => {
         height: s.map.height,
         cells: Array.from(s.map.cells, (c) => (c ? "1" : "0")).join(""),
       },
+      lastFile: s.source?.file.location ?? null,
     };
     void platform().saveState(persisted);
   }, 300);

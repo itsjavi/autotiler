@@ -1,8 +1,9 @@
-import { BookOpen, ChevronDown, FolderOpen, Keyboard } from "lucide-react";
+import { BookOpen, ChevronDown, FolderOpen, History, Keyboard } from "lucide-react";
 
-import { Button, DropdownMenu, IconButton } from "../components/ui.tsx";
+import { Button, DropdownMenu, IconButton, type MenuEntry } from "../components/ui.tsx";
 import { platform } from "../platform/index.ts";
-import { EXAMPLES, openExample, openFile, saveGuide } from "./actions.ts";
+import { useApp } from "../state/store.ts";
+import { EXAMPLES, fileNameOf, openExample, openFile, openRecent, saveGuide } from "./actions.ts";
 
 const GUIDE_SIZES = [8, 16, 24, 32] as const;
 
@@ -10,12 +11,13 @@ export function Header({ onShowShortcuts }: { onShowShortcuts: () => void }) {
   return (
     <header className="flex h-11 shrink-0 items-center gap-2 border-b border-line bg-panel px-3">
       <img src="./favicon.png" alt="" className="size-5 [image-rendering:pixelated]" />
-      <span className="text-sm font-semibold tracking-tight">Autotiler</span>
+      <h1 className="text-sm font-semibold tracking-tight">Autotiler</h1>
       <span className="rounded bg-raised px-1.5 py-px text-[10px] font-medium text-muted">v2</span>
       <nav className="ml-3 flex items-center gap-1" aria-label="File">
         <Button size="sm" onClick={() => void openFile()}>
           <FolderOpen className="size-3.5" /> Open…
         </Button>
+        <RecentMenu />
         <DropdownMenu
           label="Examples"
           trigger={
@@ -32,7 +34,7 @@ export function Header({ onShowShortcuts }: { onShowShortcuts: () => void }) {
           }))}
         />
         <DropdownMenu
-          label="Blank templates"
+          label="Blank template"
           trigger={
             <Button size="sm" variant="ghost">
               Blank template <ChevronDown className="size-3.5" />
@@ -71,5 +73,33 @@ export function Header({ onShowShortcuts }: { onShowShortcuts: () => void }) {
         </IconButton>
       </div>
     </header>
+  );
+}
+
+function RecentMenu() {
+  const recent = useApp((s) => s.recent);
+  const clearRecent = useApp((s) => s.clearRecent);
+  if (!platform().openPath || recent.length === 0) return null;
+  const items: MenuEntry[] = [
+    ...recent.map((path) => ({
+      kind: "item" as const,
+      key: path,
+      label: fileNameOf(path),
+      hint: <span className="block max-w-96 truncate">{path}</span>,
+      onSelect: () => void openRecent(path),
+    })),
+    { kind: "separator", key: "sep" },
+    { kind: "item", key: "clear", label: "Clear the list", onSelect: clearRecent },
+  ];
+  return (
+    <DropdownMenu
+      label="Open recent"
+      trigger={
+        <Button size="sm" variant="ghost">
+          <History className="size-3.5" /> Recent <ChevronDown className="size-3.5" />
+        </Button>
+      }
+      items={items}
+    />
   );
 }

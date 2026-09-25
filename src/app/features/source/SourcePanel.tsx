@@ -1,14 +1,14 @@
-import { AlertTriangle, CircleX, Eye, FolderOpen, Info, X } from "lucide-react";
+import { AlertTriangle, ArrowLeftRight, CircleX, Eye, FolderOpen, Info, X } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 
 import { PIECE_COLORS, PIECE_KINDS, PIECE_NAMES, quarterRect, type Issue, type Template } from "../../../core/index.ts";
 import { fitZoom, PixelCanvas, useElementSize, type OverlayContext } from "../../components/PixelCanvas.tsx";
-import { Button, Field, IconButton, SelectInput, TextInput } from "../../components/ui.tsx";
+import { Button, Field, IconButton, SelectInput, TextInput, Tip } from "../../components/ui.tsx";
 import { cn } from "../../lib/cn.ts";
 import { platform } from "../../platform/index.ts";
 import { useTileset } from "../../state/derived.ts";
 import { useApp, type Source } from "../../state/store.ts";
-import { EXAMPLES, openExample, openFile } from "../actions.ts";
+import { counterpartOf, EXAMPLES, fileNameOf, openExample, openFile, openRecent, saveConverted } from "../actions.ts";
 
 const TEMPLATE_OPTIONS = [
   { value: "auto", label: "Detect automatically" },
@@ -50,21 +50,57 @@ function EmptySource() {
           <strong className="font-medium text-ink">RPG Maker A2:</strong> 2×3 tiles.
         </p>
       </div>
+      <RecentFiles />
       <div className="flex flex-col gap-1">
-        <span className="text-xs font-medium text-muted">Try an example</span>
+        <h3 className="text-xs font-medium text-muted">Try an example</h3>
         {EXAMPLES.map((e) => (
-          <button
-            key={e.file}
-            type="button"
-            onClick={() => void openExample(e)}
-            className="flex flex-col rounded-md px-2 py-1.5 text-left hover:bg-raised"
-          >
-            <span className="text-sm text-ink">{e.label}</span>
-            <span className="text-[11px] text-muted">{e.hint}</span>
-          </button>
+          <ListButton key={e.file} title={e.label} detail={e.hint} onClick={() => void openExample(e)} />
         ))}
       </div>
     </>
+  );
+}
+
+function RecentFiles() {
+  const recent = useApp((s) => s.recent);
+  if (!platform().openPath || recent.length === 0) return null;
+  return (
+    <div className="flex flex-col gap-1">
+      <h3 className="text-xs font-medium text-muted">Recent</h3>
+      {recent.slice(0, 5).map((path) => (
+        <ListButton
+          key={path}
+          title={fileNameOf(path)}
+          detail={path}
+          tooltip={path}
+          onClick={() => void openRecent(path)}
+        />
+      ))}
+    </div>
+  );
+}
+
+function ListButton({
+  title,
+  detail,
+  tooltip,
+  onClick,
+}: {
+  title: string;
+  detail: string;
+  tooltip?: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={tooltip}
+      className="flex min-w-0 flex-col rounded-md px-2 py-1.5 text-left outline-none hover:bg-raised focus-visible:ring-2 focus-visible:ring-accent/70"
+    >
+      <span className="truncate text-sm text-ink">{title}</span>
+      <span className="truncate text-[11px] text-muted">{detail}</span>
+    </button>
   );
 }
 
@@ -128,6 +164,13 @@ function LoadedSource({ source }: { source: Source }) {
           }}
         />
       </Field>
+      {template && result?.tileset ? (
+        <Tip content="Rearranges the same pieces into the other template layout — e.g. to use your art in RPG Maker.">
+          <Button size="sm" variant="ghost" className="justify-start" onClick={() => void saveConverted()}>
+            <ArrowLeftRight className="size-3.5" /> Save as {counterpartOf(template.id).name}…
+          </Button>
+        </Tip>
+      ) : null}
       {analysis && analysis.issues.length > 0 ? (
         <ul className="flex flex-col gap-1.5">
           {analysis.issues.map((issue) => (

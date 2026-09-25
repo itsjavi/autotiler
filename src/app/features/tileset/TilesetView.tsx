@@ -1,5 +1,5 @@
 import { Grid3x3, Maximize, Minus, Plus, Shapes, SquareDashed, Waypoints } from "lucide-react";
-import { useCallback, useRef } from "react";
+import { useCallback, useId, useRef, type KeyboardEvent } from "react";
 
 import {
   DIRECTIONS,
@@ -160,6 +160,25 @@ function describe(cell: TilesetCell | undefined): string {
   return `Dual tile ${cell.x},${cell.y} · filled corners: ${names.length ? names.join(" ") : "none"}`;
 }
 
+const ARROWS: Record<string, readonly [number, number]> = {
+  ArrowLeft: [-1, 0],
+  ArrowRight: [1, 0],
+  ArrowUp: [0, -1],
+  ArrowDown: [0, 1],
+};
+
+/** The next tile from `from` in direction (dx, dy), skipping the layout's empty cells. */
+function step(tileset: Tileset, from: { x: number; y: number }, dx: number, dy: number) {
+  const { columns, rows } = tileset.layout;
+  for (let x = from.x + dx, y = from.y + dy; x >= 0 && y >= 0 && x < columns && y < rows; x += dx, y += dy) {
+    if (tileset.cells.some((c) => c.x === x && c.y === y)) return { x, y };
+  }
+  return null;
+}
+
+const firstCell = (tileset: Tileset) =>
+  tileset.cells.reduce((a, c) => (c.y < a.y || (c.y === a.y && c.x < a.x) ? c : a), tileset.cells[0]);
+
 export function TilesetView() {
   const result = useTileset();
   const zoomSetting = useApp((s) => s.settings.zoom);
@@ -170,6 +189,7 @@ export function TilesetView() {
   const setSettings = useApp((s) => s.setSettings);
   const box = useRef<HTMLDivElement>(null);
   const size = useElementSize(box);
+  const statusId = useId();
   const tileset = result?.tileset ?? null;
 
   const overlay = useCallback(
@@ -179,12 +199,21 @@ export function TilesetView() {
     [tileset, overlays, collision, hover],
   );
 
+  // keyboard inspection: arrow keys walk the tiles, the status bar (a live region) describes the current one
+  const onKeyDown = (e: KeyboardEvent<HTMLCanvasElement>) => {
+    const d = ARROWS[e.key];
+    if (!d || !tileset) return;
+    e.preventDefault();
+    const next = hover ? step(tileset, hover, d[0], d[1]) : firstCell(tileset);
+    if (next) setHover({ x: next.x, y: next.y });
+  };
+
   const fit = tileset ? fitZoom(tileset.image, { width: size.width - 2, height: size.height - 2 }) : 1;
   const zoom = zoomSetting === "fit" ? fit : zoomSetting;
   const hovered = tileset && hover ? tileset.cells.find((c) => c.x === hover.x && c.y === hover.y) : undefined;
 
   return (
-    <section aria-label="Tileset" className="flex min-h-0 flex-1 flex-col">
+    <section className="flex min-h-0 flex-1 flex-col">
       <div className="flex h-10 shrink-0 items-center gap-1 border-b border-line px-2">
         <OverlayToggle id="grid" label="Tile grid" keyHint="G">
           <Grid3x3 className="size-3.5" /> Grid
@@ -207,6 +236,17 @@ export function TilesetView() {
           <div className="rounded-md border border-line shadow-lg">
             <PixelCanvas
               label={`Generated tileset, ${tileset.cells.length} tiles`}
+              className="outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
+              tabIndex={0}
+              aria-describedby={statusId}
+              onKeyDown={onKeyDown}
+              onFocus={() => {
+                if (!useApp.getState().hover) {
+                  const first = firstCell(tileset);
+                  setHover({ x: first.x, y: first.y });
+                }
+              }}
+              onBlur={() => setHover(null)}
               image={tileset.image}
               zoom={zoom}
               overlay={overlay}
@@ -225,11 +265,11 @@ export function TilesetView() {
         )}
       </div>
       <div className="flex h-7 shrink-0 items-center border-t border-line px-3 text-[11px] text-muted">
-        <span className="truncate">
+        <span id={statusId} aria-live="polite" className="truncate">
           {hovered
             ? describe(hovered)
             : tileset
-              ? `${tileset.cells.length} tiles · ${tileset.layout.name} · ${tileset.tileSize} px — hover a tile to inspect it`
+              ? `${tileset.cells.length} tiles · ${tileset.layout.name} · ${tileset.tileSize} px — hover a tile (or focus the image and use the arrow keys) to inspect it`
               : ""}
         </span>
       </div>

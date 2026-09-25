@@ -23,6 +23,13 @@ export function ExportPanel() {
   const autoColor = toHex(terrainColorOf(source, tileset, { ...settings, terrainColor: null }));
   const usesTerrain = settings.target === "godot4" || settings.target === "tiled";
   const canAutoExport = p.canWatch && !!outputFolder;
+  const blocked = !source
+    ? "Open a template image to export its tileset."
+    : !tileset
+      ? "Fix the template first (see the source panel)."
+      : !supported
+        ? "This format needs a 47-tile layout."
+        : null;
 
   return (
     <aside
@@ -133,6 +140,7 @@ export function ExportPanel() {
         <Button disabled={!tileset} onClick={() => void copyPng()}>
           <Copy className="size-4" /> Copy PNG
         </Button>
+        {blocked ? <p className="text-[11px] leading-snug text-muted">{blocked}</p> : null}
       </div>
 
       {p.canWatch ? (

@@ -33,6 +33,8 @@ export interface Platform {
   /** can write straight into a folder (otherwise files are downloaded) */
   readonly canPickFolder: boolean;
   openImage: () => Promise<SourceFile | null>;
+  /** re-opens a file by absolute path (desktop: recent files, restoring the last session) */
+  openPath?: (path: string) => Promise<SourceFile>;
   fileFromDataTransfer: (dt: DataTransfer) => Promise<SourceFile | null>;
   /** native file drops (desktop); the web uses HTML5 drag and drop instead */
   subscribeNativeDrop?: (onFile: (file: SourceFile) => void, onHover: (over: boolean) => void) => Promise<() => void>;

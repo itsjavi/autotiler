@@ -170,6 +170,7 @@ export function App() {
         <div className="grid min-h-0 flex-1 grid-cols-1 overflow-auto lg:grid-cols-[18rem_minmax(0,1fr)_19rem] lg:overflow-hidden">
           <SourcePanel />
           <Tabs.Root
+            render={<main />}
             value={view}
             onValueChange={(v: View) => setView(v)}
             className="flex min-h-[28rem] min-w-0 flex-col bg-app"

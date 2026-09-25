@@ -9,7 +9,7 @@
   --color-line: #363e52;
   --color-line-strong: #4a5470;
   --color-ink: #d6d9e0;
-  --color-muted: #8f98ab;
+  --color-muted: #9aa3b5; /* ≥ 4.5:1 on every surface, down to raised */
   --color-accent: #699ce8;
   --color-accent-ink: #0d1422;
   --color-warn: #fcc751;
