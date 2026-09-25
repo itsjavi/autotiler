@@ -108,7 +108,7 @@ export async function exportNow(options: { quiet?: boolean } = {}): Promise<bool
     const showTip = settings.target === "godot4" && !settings.forceNearest && !settings.filterTipShown;
     if (showTip) useApp.getState().setSettings({ filterTipShown: true });
     const tip = showTip
-      ? " For crisp pixels in Godot: Project Settings → Rendering → Textures → Default Texture Filter = Nearest (or turn on “Force nearest filtering”)."
+      ? " For crisp pixels in Godot: Project Settings → Rendering → Textures → Canvas Textures → Default Texture Filter = Nearest (or turn on “Force nearest filtering”)."
       : "";
     const p = platform();
     const where = folderPath;

@@ -1,0 +1,70 @@
+name: Release
+
+# Builds the desktop apps and attaches them to a *draft* GitHub Release named after the version in package.json.
+# Push a tag (`git tag v2.0.0 && git push origin v2.0.0`) or run it by hand, then review and publish the draft.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            args: --target universal-apple-darwin
+            rust-targets: aarch64-apple-darwin,x86_64-apple-darwin
+          - os: windows-latest
+            args: ""
+            rust-targets: ""
+          # the oldest supported Ubuntu keeps the glibc requirement of the Linux bundles low
+          - os: ubuntu-22.04
+            args: ""
+            rust-targets: ""
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Linux build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xdg-utils
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust-targets }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+      - run: pnpm install --frozen-lockfile
+      - uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # macOS apps are ad-hoc signed (`signingIdentity: "-"`). With an Apple Developer account, add these
+          # secrets to sign and notarize instead: APPLE_CERTIFICATE, APPLE_CERTIFICATE_PASSWORD,
+          # APPLE_SIGNING_IDENTITY, APPLE_API_ISSUER, APPLE_API_KEY, APPLE_API_KEY_PATH.
+        with:
+          tagName: v__VERSION__
+          releaseName: Autotiler v__VERSION__
+          releaseBody: |
+            See [CHANGELOG.md](https://github.com/itsjavi/autotiler/blob/master/CHANGELOG.md) for what's new.
+
+            - **macOS** (Apple Silicon and Intel, macOS 13+): `Autotiler_*_universal.dmg`. The app isn't notarized:
+              the first time, open it, then allow it in *System Settings → Privacy & Security → Open Anyway*.
+            - **Windows**: `Autotiler_*_x64-setup.exe` (or the `.msi`).
+            - **Linux**: `.AppImage`, `.deb` or `.rpm`.
+            - **No install**: the web version at https://itsjavi.github.io/autotiler/
+          releaseDraft: true
+          prerelease: false
+          uploadUpdaterJson: false
+          args: ${{ matrix.args }}

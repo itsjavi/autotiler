@@ -29,3 +29,32 @@ jobs:
             tests/fixtures/expected/*.actual.png
             tests/fixtures/expected/*.diff.png
           retention-days: 7
+
+  desktop:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+      - run: pnpm install --frozen-lockfile
+      # the Rust build embeds ../dist
+      - run: pnpm build
+      - name: cargo fmt, clippy and test
+        working-directory: src-tauri
+        run: |
+          cargo fmt --check
+          cargo clippy --locked -- -D warnings
+          cargo test --locked
