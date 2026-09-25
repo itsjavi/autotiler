@@ -18,3 +18,14 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
       - run: pnpm build
+      - run: pnpm exec playwright install --with-deps chromium webkit
+      - run: pnpm test:e2e
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            test-results/
+            tests/fixtures/expected/*.actual.png
+            tests/fixtures/expected/*.diff.png
+          retention-days: 7

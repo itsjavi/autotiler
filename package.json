@@ -24,12 +24,16 @@
     "check": "pnpm fmt:check && pnpm lint && pnpm typecheck && pnpm test"
   },
   "dependencies": {
+    "@base-ui/react": "^1.8.0",
     "fast-png": "^8.0.0",
     "fflate": "^0.8.3",
+    "lucide-react": "^1.48.0",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react-dom": "^19.3.0",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.12.0",
     "@types/react": "^19.3.0",

@@ -18,4 +18,7 @@ export default defineConfig({
     watch: { ignored: ["**/src-tauri/**"] },
   },
   envPrefix: ["VITE_", "TAURI_ENV_*"],
+  // one screen, one chunk: ~540 kB minified / ~170 kB gzipped (React + Base UI + the core) is fine for a desktop
+  // app and a static site, so don't warn about it
+  build: { chunkSizeWarningLimit: 700 },
 });

@@ -1,1 +1,67 @@
 @import "tailwindcss";
+
+/* Compact dark theme in the spirit of the Godot editor (and v1's palette). */
+@theme {
+  --color-app: #1c202a;
+  --color-panel: #232937;
+  --color-raised: #2f3648;
+  --color-field: #1a1e28;
+  --color-line: #363e52;
+  --color-line-strong: #4a5470;
+  --color-ink: #d6d9e0;
+  --color-muted: #8f98ab;
+  --color-accent: #699ce8;
+  --color-accent-ink: #0d1422;
+  --color-warn: #fcc751;
+  --color-danger: #ef6b73;
+  --color-ok: #7fc97a;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--color-app);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  input[type="number"] {
+    appearance: textfield;
+  }
+  input[type="number"]::-webkit-inner-spin-button {
+    opacity: 0.5;
+  }
+  input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  /* transparency checkerboard behind pixel canvases */
+  .checker {
+    background-color: #2b3040;
+    background-image:
+      linear-gradient(45deg, #353b4e 25%, transparent 25%), linear-gradient(-45deg, #353b4e 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #353b4e 75%), linear-gradient(-45deg, transparent 75%, #353b4e 75%);
+    background-size: 16px 16px;
+    background-position:
+      0 0,
+      0 8px,
+      8px -8px,
+      -8px 0;
+  }
+}

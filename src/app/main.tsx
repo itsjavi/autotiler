@@ -1,14 +1,26 @@
+import { Toast } from "@base-ui/react/toast";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
+import { App } from "./App.tsx";
+import { toastManager } from "./components/toasts.tsx";
+import { initPlatform } from "./platform/index.ts";
+import { hydrate } from "./state/store.ts";
+
 import "./styles.css";
 
-function App() {
-  return <main className="grid min-h-dvh place-items-center bg-[#333b4f] text-[#ccced3]">Autotiler v2</main>;
+async function start() {
+  await initPlatform();
+  await hydrate();
+  const root = document.getElementById("root");
+  if (!root) throw new Error("#root missing");
+  createRoot(root).render(
+    <StrictMode>
+      <Toast.Provider toastManager={toastManager}>
+        <App />
+      </Toast.Provider>
+    </StrictMode>,
+  );
 }
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+void start();

@@ -2,7 +2,7 @@
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "printWidth": 120,
   "sortImports": true,
-  "sortTailwindcss": true,
+  "sortTailwindcss": { "stylesheet": "./src/app/styles.css", "functions": ["cn"] },
   "ignorePatterns": [
     "dist/**",
     "src-tauri/gen/**",
