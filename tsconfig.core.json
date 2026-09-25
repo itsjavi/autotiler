@@ -8,5 +8,5 @@
     "moduleResolution": "nodenext"
   },
   "include": ["src/core"],
-  "exclude": ["src/core/**/*.test.ts"]
+  "exclude": ["src/core/**/*.test.ts", "**/__snapshots__/**"]
 }

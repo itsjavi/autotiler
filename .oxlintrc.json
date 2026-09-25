@@ -35,5 +35,5 @@
       "rules": { "no-restricted-imports": "off" }
     }
   ],
-  "ignorePatterns": ["dist/**", "src-tauri/**", "public/**"]
+  "ignorePatterns": ["dist/**", "src-tauri/**", "public/**", "**/__snapshots__/**"]
 }

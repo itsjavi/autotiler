@@ -1,0 +1,10 @@
+; Throwaway project used by tests/godot/godot.test.ts (copied to a temp dir per run).
+config_version=5
+
+[application]
+
+config/name="autotiler-godot-check"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0

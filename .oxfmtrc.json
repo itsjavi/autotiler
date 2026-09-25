@@ -3,5 +3,12 @@
   "printWidth": 120,
   "sortImports": true,
   "sortTailwindcss": true,
-  "ignorePatterns": ["dist/**", "src-tauri/gen/**", "src-tauri/target/**", "tests/fixtures/**", "public/**"]
+  "ignorePatterns": [
+    "dist/**",
+    "src-tauri/gen/**",
+    "src-tauri/target/**",
+    "tests/fixtures/**",
+    "public/**",
+    "**/__snapshots__/**"
+  ]
 }
