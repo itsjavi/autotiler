@@ -127,9 +127,10 @@ pnpm desktop:build  # native bundles in src-tauri/target/release/bundle
 The Godot check runs as part of `pnpm test` when a Godot 4 binary is found (`GODOT_BIN`, `/Applications/Godot.app`
 or `godot` on the `PATH`). Otherwise it's skipped.
 
-**Releasing:** bump the version in `package.json` (and `src-tauri/Cargo.toml`), add it to `CHANGELOG.md`, then
-push a `vX.Y.Z` tag. The release workflow builds every platform into a draft GitHub Release; publishing the draft
-also pushes the builds to itch.io, once the `ITCH_GAME` variable and `BUTLER_API_KEY` secret are set. The web
+**Releasing:** run `node scripts/set-version.ts X.Y.Z` (it updates `package.json`, `src-tauri/Cargo.toml` and
+`Cargo.lock`), add the version to `CHANGELOG.md`, commit, then push a `vX.Y.Z` tag. The release workflow stops if
+the tag and the version disagree, and otherwise builds every platform into a draft GitHub Release; publishing the
+draft also pushes the builds to itch.io, once the `ITCH_GAME` variable and `BUTLER_API_KEY` secret are set. The web
 version deploys from `main` to GitHub Pages.
 
 ## Feedback

@@ -1,6 +1,6 @@
 {
   "name": "autotiler",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "description": "Turn a small terrain template into a 47-tile blob tileset, with Godot 4, Tiled and dual-grid export.",
   "homepage": "https://route1rodent.itch.io/autotiler",

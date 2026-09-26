@@ -1,6 +1,6 @@
 [package]
 name = "autotiler"
-version = "2.0.0"
+version = "2.0.1"
 description = "Autotile tileset generator with Godot 4, Tiled and dual-grid export"
 authors = ["route1rodent <route1rodent@itsjavi.com>"]
 license = "MIT"
