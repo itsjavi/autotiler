@@ -1,0 +1,10 @@
+{
+  // Config files, scripts and all tests (unit, golden, Godot, e2e).
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/node.tsbuildinfo",
+    "lib": ["ES2023", "DOM"],
+    "types": ["node"]
+  },
+  "include": ["*.config.ts", "scripts", "tests", "src/**/*.test.ts"]
+}

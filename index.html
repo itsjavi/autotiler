@@ -1,55 +1,18 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <meta
+      name="description"
+      content="Turn a small terrain template into a 47-tile blob autotile tileset with Godot 4 and Tiled export."
+    />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <title>Autotiler</title>
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self'; script-src 'self'; img-src 'self' data: file:;">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <link rel="icon" type="image/png" href="./img/icon.png"/>
-    <link rel="stylesheet" href="./styles.css"/>
-</head>
-<body>
-<main>
-    <div>
-        Tile Size: <input id="tile_size" type="number" value="16" min="8" max="256" step="8">
-    </div>
-    <hr>
-    <div class="flex">
-        <figure id="img-input">
-            <figcaption>Input File (Wang)</figcaption>
-            <div id="uploader" role="button">
-                <picture id="uploader-pic" class="checkerboard-bg">
-                    <img id="uploader-img" src="./img/demo-empty.png" alt="source"/>
-                </picture>
-                <input id="uploader-input" type="file"/>
-            </div>
-        </figure>
-        <div><img class="big-arrow" src="./img/arrow.png"/></div>
-        <figure id="img-output">
-            <figcaption>Preview (Blob)</figcaption>
-            <div id="composer">
-                <picture id="composer-pic" class="checkerboard-bg">
-                    <canvas id="composer-img-canvas" width="704" height="320"></canvas>
-                </picture>
-
-                <div id="img-output-generated"></div>
-                <button id="btn-save-image" disabled>Export as PNG</button>
-                <button id="btn-export-godot" disabled>Export as Godot TileSet</button>
-            </div>
-        </figure>
-    </div>
-    <hr>
-</main>
-<footer>
-    <span id="app-version"></span>
-    <i>•</i>
-    <span><a href="https://route1rodent.itch.io/autotiler" target="_blank">Website and Documentation</a></span>
-    <i>•</i>
-    <span>Created by <a href="https://route1rodent.com/about" target="_blank">@route1rodent</a></span>
-</footer>
-<script src="./renderer.js"></script>
-</body>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/app/main.tsx"></script>
+  </body>
 </html>

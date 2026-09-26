@@ -1,0 +1,22 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "What the Autotiler window may do. No static file paths: a file or folder becomes accessible only after the user picks or drops it (persisted-scope keeps those grants across restarts).",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "dialog:allow-open",
+    "dialog:allow-save",
+    "fs:allow-read-file",
+    "fs:allow-write-file",
+    "fs:allow-write-text-file",
+    "fs:allow-mkdir",
+    "fs:allow-exists",
+    "fs:allow-watch",
+    "fs:allow-unwatch",
+    "store:default",
+    "window-state:default",
+    "opener:default",
+    "opener:allow-reveal-item-in-dir"
+  ]
+}

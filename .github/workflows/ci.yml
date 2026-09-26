@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [master, v2]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm build
+      - run: pnpm exec playwright install --with-deps chromium webkit
+      - run: pnpm test:e2e
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            test-results/
+            tests/fixtures/expected/*.actual.png
+            tests/fixtures/expected/*.diff.png
+          retention-days: 7
+
+  desktop:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+      - run: pnpm install --frozen-lockfile
+      # the Rust build embeds ../dist
+      - run: pnpm build
+      - name: cargo fmt, clippy and test
+        working-directory: src-tauri
+        run: |
+          cargo fmt --check
+          cargo clippy --locked -- -D warnings
+          cargo test --locked

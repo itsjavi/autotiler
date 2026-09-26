@@ -1,47 +1,64 @@
 {
   "name": "autotiler",
-  "version": "1.2.0",
-  "main": "main.js",
+  "version": "2.0.0",
   "private": true,
-  "scripts": {
-    "start": "electron .",
-    "dist": "electron-builder -mwl",
-    "postinstall": "electron-builder install-app-deps"
-  },
-  "author": "route1rodent <route1rodent@itsjavi.com>",
+  "description": "Turn a small terrain template into a 47-tile blob tileset, with Godot 4, Tiled and dual-grid export.",
   "homepage": "https://route1rodent.itch.io/autotiler",
-  "butler": {
-    "project": "route1rodent/autotiler"
-  },
-  "devDependencies": {
-    "electron": "^9.4.0",
-    "electron-builder": "^22.8.0"
+  "license": "MIT",
+  "author": "route1rodent <route1rodent@itsjavi.com>",
+  "repository": "github:itsjavi/autotiler",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "golden:update": "node scripts/update-golden.ts",
+    "check": "pnpm fmt:check && pnpm lint && pnpm typecheck && pnpm test",
+    "tauri": "tauri",
+    "desktop:dev": "tauri dev",
+    "desktop:build": "tauri build"
   },
   "dependencies": {
-    "electron-unhandled": "^3.0.2",
-    "open": "^7.1.0"
+    "@base-ui/react": "^1.8.0",
+    "@tauri-apps/api": "^2.11.1",
+    "@tauri-apps/plugin-dialog": "~2.7.3",
+    "@tauri-apps/plugin-fs": "~2.5.2",
+    "@tauri-apps/plugin-opener": "~2.5.5",
+    "@tauri-apps/plugin-store": "~2.4.5",
+    "@tauri-apps/plugin-window-state": "~2.4.1",
+    "fast-png": "^8.0.0",
+    "fflate": "^0.8.3",
+    "lucide-react": "^1.48.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zustand": "^5.0.15"
   },
-  "build": {
-    "appId": "com.route1rodent.autotiler",
-    "productName": "Autotiler",
-    "copyright": "Copyright © 2020, ${author}",
-    "artifactName": "${name}-${os}.${ext}",
-    "directories": {
-      "buildResources": "img"
-    },
-    "files": [
-      "**/*",
-      "img/*"
-    ],
-    "mac": {
-      "category": "public.app-category.graphics-design",
-      "target": "dmg"
-    },
-    "win": {
-      "target": "portable"
-    },
-    "linux": {
-      "target": "AppImage"
-    }
-  }
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@tauri-apps/cli": "^2.11.5",
+    "@types/node": "^24.12.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxfmt": "~0.70.0",
+    "oxlint": "^1.85.0",
+    "oxlint-tsgolint": "^7.0.2003",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.1"
+  },
+  "engines": {
+    "node": ">=24.12"
+  },
+  "packageManager": "pnpm@12.6.0"
 }

@@ -1,0 +1,54 @@
+name: itch.io
+
+# Optional: pushes a published release and the web version to itch.io with butler. Inactive until the repository
+# has the variable ITCH_GAME (e.g. `route1rodent/autotiler`) and the secret BUTLER_API_KEY (`butler login`, or
+# https://itch.io/user/settings/api-keys).
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to push, e.g. v2.0.0
+        required: true
+
+jobs:
+  push:
+    if: vars.ITCH_GAME != ''
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+      ITCH_GAME: ${{ vars.ITCH_GAME }}
+      BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.TAG }}
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Download the release bundles
+        run: |
+          mkdir -p itch/macos itch/windows itch/linux
+          gh release download "$TAG" --dir itch/macos --pattern '*_universal.dmg'
+          gh release download "$TAG" --dir itch/windows --pattern '*-setup.exe'
+          gh release download "$TAG" --dir itch/linux --pattern '*.AppImage'
+      - name: Install butler
+        run: |
+          curl -fsSL -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          unzip -q butler.zip -d "$RUNNER_TEMP/butler"
+          chmod +x "$RUNNER_TEMP/butler/butler"
+          echo "$RUNNER_TEMP/butler" >> "$GITHUB_PATH"
+      - name: Push to itch.io
+        run: |
+          version="${TAG#v}"
+          butler push dist "$ITCH_GAME:html5" --userversion "$version"
+          butler push itch/macos "$ITCH_GAME:macos-universal" --userversion "$version"
+          butler push itch/windows "$ITCH_GAME:windows" --userversion "$version"
+          butler push itch/linux "$ITCH_GAME:linux-universal" --userversion "$version"

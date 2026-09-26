@@ -1,0 +1,43 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "Autotiler",
+  "version": "../package.json",
+  "identifier": "com.route1rodent.autotiler",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:5173",
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Autotiler",
+        "width": 1320,
+        "height": 840,
+        "minWidth": 1024,
+        "minHeight": 640,
+        "theme": "Dark",
+        "backgroundColor": "#1c202a",
+        "dragDropEnabled": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "GraphicsAndDesign",
+    "copyright": "© 2020-2026 route1rodent",
+    "shortDescription": "Autotile tileset generator",
+    "longDescription": "Turn a small terrain template into a 47-tile blob or 16-tile dual-grid tileset, with Godot 4, Tiled and PNG export.",
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
+    "macOS": {
+      "minimumSystemVersion": "13.0",
+      "signingIdentity": "-"
+    }
+  }
+}

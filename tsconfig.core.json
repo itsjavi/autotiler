@@ -1,0 +1,12 @@
+{
+  // Portability guard: the core must run unchanged in the browser, the Tauri webview, Node (tests) and a future
+  // CLI. No DOM lib and no @types/node here, and nodenext forces explicit .ts import extensions.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/core.tsbuildinfo",
+    "module": "nodenext",
+    "moduleResolution": "nodenext"
+  },
+  "include": ["src/core"],
+  "exclude": ["src/core/**/*.test.ts", "**/__snapshots__/**"]
+}

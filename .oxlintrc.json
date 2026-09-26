@@ -1,0 +1,39 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "react", "jsx-a11y", "import", "vitest"],
+  "categories": { "correctness": "error", "suspicious": "warn", "perf": "warn" },
+  "env": { "browser": true, "es2024": true },
+  "options": { "typeAware": true },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+    "react/react-in-jsx-scope": "off",
+    "import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }],
+    "typescript/no-floating-promises": "error",
+    "import/no-cycle": "error"
+  },
+  "overrides": [
+    {
+      "files": ["src/core/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["react", "react-dom", "react/*", "react-dom/*", "@tauri-apps/*", "node:*", "**/app/**"],
+                "message": "src/core must stay environment-free (no DOM, Node, React or Tauri)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.config.ts", "scripts/**", "tests/**", "src/**/*.test.ts"],
+      "env": { "node": true },
+      "rules": { "no-restricted-imports": "off" }
+    }
+  ],
+  "ignorePatterns": ["dist/**", "src-tauri/**", "public/**", "**/__snapshots__/**"]
+}
