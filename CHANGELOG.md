@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1 (unreleased)
+
+- New **examples**: meadow, pond, side-view grassy ground, cobblestone and lava at 16 px, with 24 and 32 px versions
+  and an RPG Maker A2 meadow, shown as thumbnails when no template is open. v1's beveled block is still there.
+
 ## 2.0.0 (2026-09-26)
 
 A rewrite from scratch: a TypeScript engine with tests, a new UI, a small native desktop app and a web version.
@@ -18,8 +23,8 @@ A rewrite from scratch: a TypeScript engine with tests, a new UI, a small native
 - A **test map** to paint with the tileset, fill randomly or fill with every combination.
 - Overlays for the grid, quarters, peering bits and collisions, plus a tile inspector that also works from the
   keyboard.
-- Drag and drop, pasting from and copying to the clipboard, examples, blank colour-coded templates, keyboard
-  shortcuts and warnings for template problems (such as empty pieces).
+- Drag and drop, pasting from and copying to the clipboard, blank colour-coded templates, keyboard shortcuts and
+  warnings for template problems (such as empty pieces).
 - **Live updates:** export straight into a folder, re-read the template when it changes and optionally re-export.
   When the folder is inside a Godot project, the app shows its `res://` path.
 - Recent files and reopening the last file (desktop).

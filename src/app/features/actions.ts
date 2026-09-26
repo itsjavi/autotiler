@@ -23,11 +23,18 @@ export interface Example {
   readonly hint: string;
 }
 
+/** Rendered by scripts/make-examples.ts, except v1's beveled block. */
 export const EXAMPLES: readonly Example[] = [
-  { file: "autotiler13-16px.png", label: "Beveled block, 16 px", hint: "Autotiler 13-tile template" },
-  { file: "autotiler13-8px.png", label: "Beveled block, 8 px", hint: "Autotiler 13-tile template" },
-  { file: "autotiler13-32px.png", label: "Beveled block, 32 px", hint: "Autotiler 13-tile template" },
-  { file: "rpgmaker-a2-16px.png", label: "Beveled block, 16 px", hint: "RPG Maker A2 template" },
+  { file: "meadow-16px.png", label: "Meadow, 16 px", hint: "Autotiler 13-tile · top-down grass" },
+  { file: "pond-16px.png", label: "Pond, 16 px", hint: "Autotiler 13-tile · top-down water" },
+  { file: "ground-16px.png", label: "Grassy ground, 16 px", hint: "Autotiler 13-tile · side-view platformer" },
+  { file: "cobblestone-16px.png", label: "Cobblestone, 16 px", hint: "Autotiler 13-tile · top-down path" },
+  { file: "lava-16px.png", label: "Lava, 16 px", hint: "Autotiler 13-tile · top-down" },
+  { file: "meadow-a2-16px.png", label: "Meadow, 16 px", hint: "RPG Maker A2 · top-down grass" },
+  { file: "ground-24px.png", label: "Grassy ground, 24 px", hint: "Autotiler 13-tile · side-view platformer" },
+  { file: "meadow-32px.png", label: "Meadow, 32 px", hint: "Autotiler 13-tile · top-down grass" },
+  { file: "cobblestone-32px.png", label: "Cobblestone, 32 px", hint: "Autotiler 13-tile · top-down path" },
+  { file: "autotiler13-16px.png", label: "Beveled block, 16 px", hint: "Autotiler 13-tile · v1's example" },
 ];
 
 export function loadSource(file: SourceFile, reason: "open" | "reload" = "open"): void {

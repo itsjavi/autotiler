@@ -33,7 +33,7 @@ const page = await browser.newPage({
   colorScheme: "dark",
 });
 await page.goto(url);
-await page.getByRole("button", { name: /Beveled block, 16 px Autotiler/ }).click();
+await page.getByRole("button", { name: /^Meadow, 16 px Autotiler/ }).click();
 const tileset = page.getByRole("img", { name: /Generated tileset/ });
 await tileset.waitFor();
 const box = await tileset.boundingBox();
@@ -41,6 +41,8 @@ if (!box) throw new Error("the tileset isn't visible");
 await page.mouse.move(box.x + box.width * (4.5 / 12), box.y + box.height * (1.5 / 4)); // hover a tile: inspector
 await page.screenshot({ path: out("app.png") });
 
+await page.getByRole("button", { name: "Examples" }).click();
+await page.getByRole("menuitem", { name: /^Grassy ground, 16 px/ }).click();
 await page.getByRole("tab", { name: "Test map" }).click();
 await page.getByRole("img", { name: /Test map/ }).waitFor();
 await page.getByRole("main").screenshot({ path: out("test-map.png") });

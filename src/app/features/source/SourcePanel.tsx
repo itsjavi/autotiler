@@ -51,11 +51,24 @@ function EmptySource() {
         </p>
       </div>
       <RecentFiles />
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1.5">
         <h3 className="text-xs font-medium text-muted">Try an example</h3>
-        {EXAMPLES.map((e) => (
-          <ListButton key={e.file} title={e.label} detail={e.hint} onClick={() => void openExample(e)} />
-        ))}
+        <div className="grid grid-cols-2 gap-1.5">
+          {EXAMPLES.map((e) => (
+            <button
+              key={e.file}
+              type="button"
+              onClick={() => void openExample(e)}
+              className="flex min-w-0 flex-col items-center gap-1 rounded-md border border-line bg-field p-1.5 text-center outline-none hover:border-line-strong hover:bg-raised focus-visible:ring-2 focus-visible:ring-accent/70"
+            >
+              <span className="flex h-12 items-center justify-center">
+                <img src={`./examples/${e.file}`} alt="" className="max-h-12 max-w-full [image-rendering:pixelated]" />
+              </span>
+              <span className="text-xs leading-tight text-ink">{e.label}</span>
+              <span className="text-[10px] leading-tight text-muted">{e.hint}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </>
   );

@@ -46,6 +46,11 @@ Colours in the blank templates: 🟥 outer corner · 🟦 horizontal edge · �
 ⬜ fill. Download them from the app's **Blank template** menu, paint over them and open the result. The app dims
 the cells it doesn't read, and it warns about empty pieces.
 
+The **examples** make good starting points too: a meadow, a pond, side-view grassy ground, cobblestone and lava,
+at 16 px, with 24 and 32 px versions and an RPG Maker A2 meadow. They're rendered by
+`scripts/make-examples.ts`, which draws every piece from its distance to the terrain edge, so all 47 tiles join
+seamlessly.
+
 ## Using the tileset
 
 ### Godot 4
@@ -117,7 +122,7 @@ pnpm desktop:build  # native bundles in src-tauri/target/release/bundle
 | `src/app`   | The React UI. `platform/` holds the web and desktop (Tauri) implementations of files, dialogs and settings.                                                                              |
 | `src-tauri` | The desktop shell (Tauri 2).                                                                                                                                                             |
 | `tests`     | Golden images, the headless Godot check and the Playwright tests.                                                                                                                        |
-| `scripts`   | `update-golden.ts` (after an intended output change, review the diff) and `screenshots.ts` (README images).                                                                              |
+| `scripts`   | `make-examples.ts` (the example templates), `update-golden.ts` (after an intended output change, review the diff) and `screenshots.ts` (README images).                                  |
 
 The Godot check runs as part of `pnpm test` when a Godot 4 binary is found (`GODOT_BIN`, `/Applications/Godot.app`
 or `godot` on the `PATH`). Otherwise it's skipped.
