@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.1 (unreleased)
+## 2.0.1 (2026-09-26)
 
 - New **examples**: meadow, pond, side-view grassy ground, cobblestone and lava at 16 px, with 24 and 32 px versions
   and an RPG Maker A2 meadow. Both example lists show a small preview of each and sort them by name and size.
