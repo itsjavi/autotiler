@@ -21,6 +21,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "golden:update": "node scripts/update-golden.ts",
+    "release-version": "node scripts/release.ts",
     "check": "pnpm fmt:check && pnpm lint && pnpm typecheck && pnpm test",
     "tauri": "tauri",
     "desktop:dev": "tauri dev",

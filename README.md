@@ -116,21 +116,23 @@ pnpm test:e2e       # Playwright smoke tests in Chromium and WebKit
 pnpm desktop:build  # native bundles in src-tauri/target/release/bundle
 ```
 
-| Folder      | What's in it                                                                                                                                                                             |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/core`  | The tileset engine: templates, layouts, generation and exporters. Plain TypeScript with no DOM, React or Node APIs (lint-enforced), so it runs in the browser, the desktop app and Node. |
-| `src/app`   | The React UI. `platform/` holds the web and desktop (Tauri) implementations of files, dialogs and settings.                                                                              |
-| `src-tauri` | The desktop shell (Tauri 2).                                                                                                                                                             |
-| `tests`     | Golden images, the headless Godot check and the Playwright tests.                                                                                                                        |
-| `scripts`   | `make-examples.ts` (the example templates and their previews), `update-golden.ts` (after an intended output change, review the diff) and `screenshots.ts` (README images).               |
+| Folder      | What's in it                                                                                                                                                                                                      |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/core`  | The tileset engine: templates, layouts, generation and exporters. Plain TypeScript with no DOM, React or Node APIs (lint-enforced), so it runs in the browser, the desktop app and Node.                          |
+| `src/app`   | The React UI. `platform/` holds the web and desktop (Tauri) implementations of files, dialogs and settings.                                                                                                       |
+| `src-tauri` | The desktop shell (Tauri 2).                                                                                                                                                                                      |
+| `tests`     | Golden images, the headless Godot check and the Playwright tests.                                                                                                                                                 |
+| `scripts`   | `make-examples.ts` (the example templates and their previews), `release.ts` (`pnpm release-version`), `update-golden.ts` (after an intended output change, review the diff) and `screenshots.ts` (README images). |
 
 The Godot check runs as part of `pnpm test` when a Godot 4 binary is found (`GODOT_BIN`, `/Applications/Godot.app`
 or `godot` on the `PATH`). Otherwise it's skipped.
 
-**Releasing:** run `node scripts/set-version.ts X.Y.Z` (it updates `package.json`, `src-tauri/Cargo.toml` and
-`Cargo.lock`), add the version to `CHANGELOG.md`, commit, then push a `vX.Y.Z` tag. The release workflow stops if
-the tag and the version disagree, and otherwise builds every platform into a draft GitHub Release; publishing the
-draft also pushes the builds to itch.io, once the `ITCH_GAME` variable and `BUTLER_API_KEY` secret are set. The web
+**Releasing:** list the changes under `## Unreleased` at the top of `CHANGELOG.md`, then run
+`pnpm release-version patch` (or `minor`, `major`, or an exact `X.Y.Z`; `--dry-run` shows what it would do). It
+checks that `main` is clean and up to date, runs `pnpm check`, sets the version in `package.json`,
+`src-tauri/Cargo.toml` and `Cargo.lock`, dates the changelog section, then commits and tags `vX.Y.Z`. Push both
+(or pass `--push`) and the release workflow builds every platform into a draft GitHub Release; publishing the draft
+also pushes the builds to itch.io, once the `ITCH_GAME` variable and `BUTLER_API_KEY` secret are set. The web
 version deploys from `main` to GitHub Pages.
 
 ## Feedback

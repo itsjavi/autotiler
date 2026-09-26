@@ -38,11 +38,11 @@ jobs:
           crate=$(grep -m1 '^version' src-tauri/Cargo.toml | cut -d '"' -f2)
           # the builds take their version from package.json: a tag that disagrees would release the wrong version
           if [ "$GITHUB_REF_TYPE" = tag ] && [ "$GITHUB_REF_NAME" != "$tag" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME doesn't match package.json ($version). Run node scripts/set-version.ts first."
+            echo "::error::Tag $GITHUB_REF_NAME doesn't match package.json ($version). Use pnpm release-version to cut releases."
             exit 1
           fi
           if [ "$crate" != "$version" ]; then
-            echo "::error::src-tauri/Cargo.toml has $crate, package.json has $version. Run node scripts/set-version.ts."
+            echo "::error::src-tauri/Cargo.toml has $crate, package.json has $version. Use pnpm release-version to cut releases."
             exit 1
           fi
           # a re-run reuses the draft of the same version
