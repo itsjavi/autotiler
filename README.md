@@ -6,7 +6,7 @@ for **Godot 4**, **Tiled** or any engine. Free, open source, and it runs offline
 ![Autotiler with an example template and its generated Godot 3×3 minimal tileset](docs/images/app.png)
 
 **Get it:** [desktop apps for macOS, Windows and Linux](https://github.com/itsjavi/autotiler/releases/latest) ·
-[web version](https://itsjavi.github.io/autotiler/) (nothing to install) · [itch.io](https://route1rodent.itch.io/autotiler)
+[web version](https://itsjavi.com/autotiler/) (nothing to install) · [itch.io](https://route1rodent.itch.io/autotiler)
 
 ## Features
 
@@ -125,7 +125,7 @@ or `godot` on the `PATH`). Otherwise it's skipped.
 **Releasing:** bump the version in `package.json` (and `src-tauri/Cargo.toml`), add it to `CHANGELOG.md`, then
 push a `vX.Y.Z` tag. The release workflow builds every platform into a draft GitHub Release; publishing the draft
 also pushes the builds to itch.io, once the `ITCH_GAME` variable and `BUTLER_API_KEY` secret are set. The web
-version deploys from `master` to GitHub Pages.
+version deploys from `main` to GitHub Pages.
 
 ## Feedback
 

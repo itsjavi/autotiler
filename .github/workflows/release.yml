@@ -57,13 +57,13 @@ jobs:
           tagName: v__VERSION__
           releaseName: Autotiler v__VERSION__
           releaseBody: |
-            See [CHANGELOG.md](https://github.com/itsjavi/autotiler/blob/master/CHANGELOG.md) for what's new.
+            See [CHANGELOG.md](https://github.com/itsjavi/autotiler/blob/main/CHANGELOG.md) for what's new.
 
             - **macOS** (Apple Silicon and Intel, macOS 13+): `Autotiler_*_universal.dmg`. The app isn't notarized:
               the first time, open it, then allow it in *System Settings → Privacy & Security → Open Anyway*.
             - **Windows**: `Autotiler_*_x64-setup.exe` (or the `.msi`).
             - **Linux**: `.AppImage`, `.deb` or `.rpm`.
-            - **No install**: the web version at https://itsjavi.github.io/autotiler/
+            - **No install**: the web version at https://itsjavi.com/autotiler/
           releaseDraft: true
           prerelease: false
           uploadUpdaterJson: false

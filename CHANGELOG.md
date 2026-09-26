@@ -50,7 +50,7 @@ With the Autotiler v1 layout, v2 puts every pixel where v1 did, except where v1 
 ## 1.2.0 (2020-10-30)
 
 - Fixed paths on Windows; crash reporting.
-- Later on `master`: a fix for out-of-bounds Godot autotile bitmasks (#4) and Electron 9.4.
+- After the release: a fix for out-of-bounds Godot autotile bitmasks (#4) and Electron 9.4.
 
 ## 1.1.0 (2020-10-30)
 
