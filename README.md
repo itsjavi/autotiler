@@ -122,7 +122,7 @@ pnpm desktop:build  # native bundles in src-tauri/target/release/bundle
 | `src/app`   | The React UI. `platform/` holds the web and desktop (Tauri) implementations of files, dialogs and settings.                                                                              |
 | `src-tauri` | The desktop shell (Tauri 2).                                                                                                                                                             |
 | `tests`     | Golden images, the headless Godot check and the Playwright tests.                                                                                                                        |
-| `scripts`   | `make-examples.ts` (the example templates), `update-golden.ts` (after an intended output change, review the diff) and `screenshots.ts` (README images).                                  |
+| `scripts`   | `make-examples.ts` (the example templates and their previews), `update-golden.ts` (after an intended output change, review the diff) and `screenshots.ts` (README images).               |
 
 The Godot check runs as part of `pnpm test` when a Godot 4 binary is found (`GODOT_BIN`, `/Applications/Godot.app`
 or `godot` on the `PATH`). Otherwise it's skipped.

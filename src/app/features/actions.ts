@@ -23,19 +23,31 @@ export interface Example {
   readonly hint: string;
 }
 
-/** Rendered by scripts/make-examples.ts, except v1's beveled block. */
-export const EXAMPLES: readonly Example[] = [
-  { file: "meadow-16px.png", label: "Meadow, 16 px", hint: "Autotiler 13-tile · top-down grass" },
-  { file: "pond-16px.png", label: "Pond, 16 px", hint: "Autotiler 13-tile · top-down water" },
-  { file: "ground-16px.png", label: "Grassy ground, 16 px", hint: "Autotiler 13-tile · side-view platformer" },
-  { file: "cobblestone-16px.png", label: "Cobblestone, 16 px", hint: "Autotiler 13-tile · top-down path" },
-  { file: "lava-16px.png", label: "Lava, 16 px", hint: "Autotiler 13-tile · top-down" },
-  { file: "meadow-a2-16px.png", label: "Meadow, 16 px", hint: "RPG Maker A2 · top-down grass" },
-  { file: "ground-24px.png", label: "Grassy ground, 24 px", hint: "Autotiler 13-tile · side-view platformer" },
-  { file: "meadow-32px.png", label: "Meadow, 32 px", hint: "Autotiler 13-tile · top-down grass" },
-  { file: "cobblestone-32px.png", label: "Cobblestone, 32 px", hint: "Autotiler 13-tile · top-down path" },
-  { file: "autotiler13-16px.png", label: "Beveled block, 16 px", hint: "Autotiler 13-tile · v1's example" },
+/** Rendered by scripts/make-examples.ts (with their previews), except v1's beveled block. */
+const EXAMPLE_FILES: ReadonlyArray<{ file: string; name: string; size: number; template: TemplateId; kind: string }> = [
+  { file: "meadow-16px.png", name: "Meadow", size: 16, template: "autotiler-13", kind: "top-down grass" },
+  { file: "meadow-32px.png", name: "Meadow", size: 32, template: "autotiler-13", kind: "top-down grass" },
+  { file: "meadow-a2-16px.png", name: "Meadow", size: 16, template: "rpgmaker-a2", kind: "top-down grass" },
+  { file: "pond-16px.png", name: "Pond", size: 16, template: "autotiler-13", kind: "top-down water" },
+  { file: "ground-16px.png", name: "Grassy ground", size: 16, template: "autotiler-13", kind: "side-view platformer" },
+  { file: "ground-24px.png", name: "Grassy ground", size: 24, template: "autotiler-13", kind: "side-view platformer" },
+  { file: "cobblestone-16px.png", name: "Cobblestone", size: 16, template: "autotiler-13", kind: "top-down path" },
+  { file: "cobblestone-32px.png", name: "Cobblestone", size: 32, template: "autotiler-13", kind: "top-down path" },
+  { file: "lava-16px.png", name: "Lava", size: 16, template: "autotiler-13", kind: "top-down" },
+  { file: "autotiler13-16px.png", name: "Beveled block", size: 16, template: "autotiler-13", kind: "v1's example" },
 ];
+
+/** By name, then tile size (the 13-tile version before the A2 one). */
+export const EXAMPLES: readonly Example[] = EXAMPLE_FILES.toSorted(
+  (a, b) =>
+    a.name.localeCompare(b.name) ||
+    a.size - b.size ||
+    Number(a.template === "rpgmaker-a2") - Number(b.template === "rpgmaker-a2"),
+).map((e) => ({
+  file: e.file,
+  label: `${e.name}, ${e.size} px`,
+  hint: `${e.template === "rpgmaker-a2" ? "RPG Maker A2" : "Autotiler 13-tile"} · ${e.kind}`,
+}));
 
 export function loadSource(file: SourceFile, reason: "open" | "reload" = "open"): void {
   const ok = useApp.getState().loadFile(file, reason);

@@ -3,7 +3,9 @@
 ## 2.0.1 (unreleased)
 
 - New **examples**: meadow, pond, side-view grassy ground, cobblestone and lava at 16 px, with 24 and 32 px versions
-  and an RPG Maker A2 meadow, shown as thumbnails when no template is open. v1's beveled block is still there.
+  and an RPG Maker A2 meadow. Both example lists show a small preview of each and sort them by name and size.
+  v1's beveled block is still there.
+- Narrow windows (single-column layout) scroll as one page instead of squeezing the panels.
 
 ## 2.0.0 (2026-09-26)
 

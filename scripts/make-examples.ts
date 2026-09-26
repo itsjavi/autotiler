@@ -2,15 +2,19 @@
 // its piece kind alone — the distance to the terrain's edge, the edge's direction and a texture that repeats every
 // tile — so any combination of pieces the generator assembles joins without seams. Shapes scale with the tile
 // size; outlines stay 1 px.
+// Also writes public/examples/previews/: a 32×32 px preview of every example for the app's example lists.
 // Usage: node scripts/make-examples.ts [preview-dir]   (the optional dir gets enlarged previews with test maps)
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
+  analyzeSource,
   autotiler13,
+  copyRectClipped,
   CORNERS,
   createImage,
+  decodePng,
   encodePng,
   generate,
   getLayout,
@@ -491,4 +495,22 @@ if (previewDir && sheet.length) {
     y += img.height + 8;
   }
   writeFileSync(join(previewDir, "sheet-16.png"), encodePng(all));
+}
+
+// ---- previews for the example lists: the largest island of the generated tileset that fits, centred ----------
+
+const PREVIEW = 32;
+const thumbsDir = join(examplesDir, "previews");
+mkdirSync(thumbsDir, { recursive: true });
+for (const file of readdirSync(examplesDir).filter((f) => f.endsWith(".png"))) {
+  const img = decodePng(readFileSync(join(examplesDir, file)));
+  const { template, tileSize } = analyzeSource(img);
+  if (!template || !tileSize) throw new Error(`${file} isn't a template`);
+  const tileset = generate(img, { template, tileSize, layout: getLayout("godot-12x4") });
+  const n = Math.max(1, Math.floor(PREVIEW / tileSize));
+  const island = renderTestMap(tileset, { width: n, height: n, cells: new Uint8Array(n * n).fill(1) });
+  const thumb = createImage(PREVIEW, PREVIEW);
+  const at = Math.floor((PREVIEW - island.width) / 2);
+  copyRectClipped(island, 0, 0, island.width, island.height, thumb, at, at);
+  writeFileSync(join(thumbsDir, file), encodePng(thumb));
 }

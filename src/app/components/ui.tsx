@@ -292,6 +292,7 @@ export type MenuEntry =
       readonly key: string;
       readonly label: ReactNode;
       readonly hint?: ReactNode;
+      readonly icon?: ReactNode;
       readonly onSelect: () => void;
     }
   | { readonly kind: "separator"; readonly key: string }
@@ -326,10 +327,13 @@ export function DropdownMenu({
                 <Menu.Item
                   key={item.key}
                   onClick={item.onSelect}
-                  className="flex cursor-default flex-col rounded px-2 py-1.5 text-sm text-ink outline-none select-none data-highlighted:bg-accent data-highlighted:text-accent-ink"
+                  className="flex cursor-default items-center gap-2.5 rounded px-2 py-1.5 text-sm text-ink outline-none select-none data-highlighted:bg-accent data-highlighted:text-accent-ink"
                 >
-                  <span>{item.label}</span>
-                  {item.hint ? <span className="text-[11px] opacity-70">{item.hint}</span> : null}
+                  {item.icon}
+                  <span className="flex min-w-0 flex-col">
+                    <span>{item.label}</span>
+                    {item.hint ? <span className="text-[11px] opacity-70">{item.hint}</span> : null}
+                  </span>
                 </Menu.Item>
               ),
             )}

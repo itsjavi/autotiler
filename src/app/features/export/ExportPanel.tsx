@@ -34,7 +34,7 @@ export function ExportPanel() {
   return (
     <aside
       aria-label="Export"
-      className="flex min-h-0 flex-col gap-4 overflow-y-auto border-l border-line bg-panel p-3"
+      className="flex flex-col gap-4 border-t border-line bg-panel p-3 lg:min-h-0 lg:overflow-y-auto lg:border-t-0 lg:border-l"
     >
       <h2 className="text-xs font-semibold tracking-wide text-muted uppercase">Export</h2>
 

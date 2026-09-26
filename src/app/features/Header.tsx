@@ -4,6 +4,7 @@ import { Button, DropdownMenu, IconButton, type MenuEntry } from "../components/
 import { platform } from "../platform/index.ts";
 import { useApp } from "../state/store.ts";
 import { EXAMPLES, fileNameOf, openExample, openFile, openRecent, saveGuide } from "./actions.ts";
+import { ExampleThumb } from "./ExampleThumb.tsx";
 
 const GUIDE_SIZES = [8, 16, 24, 32] as const;
 
@@ -30,6 +31,7 @@ export function Header({ onShowShortcuts }: { onShowShortcuts: () => void }) {
             key: e.file,
             label: e.label,
             hint: e.hint,
+            icon: <ExampleThumb file={e.file} />,
             onSelect: () => void openExample(e),
           }))}
         />

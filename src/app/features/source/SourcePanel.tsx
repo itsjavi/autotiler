@@ -1,5 +1,5 @@
 import { AlertTriangle, ArrowLeftRight, CircleX, Eye, FolderOpen, Info, X } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
 
 import { PIECE_COLORS, PIECE_KINDS, PIECE_NAMES, quarterRect, type Issue, type Template } from "../../../core/index.ts";
 import { fitZoom, PixelCanvas, useElementSize, type OverlayContext } from "../../components/PixelCanvas.tsx";
@@ -9,6 +9,7 @@ import { platform } from "../../platform/index.ts";
 import { useTileset } from "../../state/derived.ts";
 import { useApp, type Source } from "../../state/store.ts";
 import { counterpartOf, EXAMPLES, fileNameOf, openExample, openFile, openRecent, saveConverted } from "../actions.ts";
+import { ExampleThumb } from "../ExampleThumb.tsx";
 
 const TEMPLATE_OPTIONS = [
   { value: "auto", label: "Detect automatically" },
@@ -22,7 +23,7 @@ export function SourcePanel() {
   return (
     <aside
       aria-label="Source"
-      className="flex min-h-0 flex-col gap-3 overflow-y-auto border-r border-line bg-panel p-3"
+      className="flex flex-col gap-3 border-b border-line bg-panel p-3 lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-b-0"
     >
       {source ? <LoadedSource source={source} /> : <EmptySource />}
       {loadError ? (
@@ -51,24 +52,17 @@ function EmptySource() {
         </p>
       </div>
       <RecentFiles />
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1">
         <h3 className="text-xs font-medium text-muted">Try an example</h3>
-        <div className="grid grid-cols-2 gap-1.5">
-          {EXAMPLES.map((e) => (
-            <button
-              key={e.file}
-              type="button"
-              onClick={() => void openExample(e)}
-              className="flex min-w-0 flex-col items-center gap-1 rounded-md border border-line bg-field p-1.5 text-center outline-none hover:border-line-strong hover:bg-raised focus-visible:ring-2 focus-visible:ring-accent/70"
-            >
-              <span className="flex h-12 items-center justify-center">
-                <img src={`./examples/${e.file}`} alt="" className="max-h-12 max-w-full [image-rendering:pixelated]" />
-              </span>
-              <span className="text-xs leading-tight text-ink">{e.label}</span>
-              <span className="text-[10px] leading-tight text-muted">{e.hint}</span>
-            </button>
-          ))}
-        </div>
+        {EXAMPLES.map((e) => (
+          <ListButton
+            key={e.file}
+            title={e.label}
+            detail={e.hint}
+            icon={<ExampleThumb file={e.file} />}
+            onClick={() => void openExample(e)}
+          />
+        ))}
       </div>
     </>
   );
@@ -97,11 +91,13 @@ function ListButton({
   title,
   detail,
   tooltip,
+  icon,
   onClick,
 }: {
   title: string;
   detail: string;
   tooltip?: string;
+  icon?: ReactNode;
   onClick: () => void;
 }) {
   return (
@@ -109,10 +105,13 @@ function ListButton({
       type="button"
       onClick={onClick}
       title={tooltip}
-      className="flex min-w-0 flex-col rounded-md px-2 py-1.5 text-left outline-none hover:bg-raised focus-visible:ring-2 focus-visible:ring-accent/70"
+      className="flex min-w-0 items-center gap-2.5 rounded-md px-2 py-1.5 text-left outline-none hover:bg-raised focus-visible:ring-2 focus-visible:ring-accent/70"
     >
-      <span className="truncate text-sm text-ink">{title}</span>
-      <span className="truncate text-[11px] text-muted">{detail}</span>
+      {icon}
+      <span className="flex min-w-0 flex-col">
+        <span className="truncate text-sm text-ink">{title}</span>
+        <span className="truncate text-[11px] text-muted">{detail}</span>
+      </span>
     </button>
   );
 }
