@@ -1,7 +1,8 @@
 name: Release
 
-# Builds the desktop apps and attaches them to a *draft* GitHub Release named after the version in package.json.
-# Push a tag (`git tag v2.0.0 && git push origin v2.0.0`) or run it by hand, then review and publish the draft.
+# Builds the desktop apps into a *draft* GitHub Release for the version in package.json (tag `v<version>`).
+# Push the tag (`git tag -a v2.0.0 -m "Autotiler 2.0.0" && git push origin v2.0.0`) or run it by hand, then review
+# and publish the draft; publishing also pushes the builds to itch.io (itch.yml).
 
 on:
   push:
@@ -12,7 +13,38 @@ permissions:
   contents: write
 
 jobs:
+  # One draft for every platform. Left to itself, each build job looks the draft up and creates it when missing,
+  # so two jobs finishing at the same moment could create two drafts.
+  draft:
+    runs-on: ubuntu-latest
+    outputs:
+      id: ${{ steps.release.outputs.id }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BODY: |
+            See [CHANGELOG.md](https://github.com/itsjavi/autotiler/blob/main/CHANGELOG.md) for what's new.
+
+            - **macOS** (Apple Silicon and Intel, macOS 13+): `Autotiler_*_universal.dmg`. The app isn't notarized:
+              the first time, open it, then allow it in *System Settings → Privacy & Security → Open Anyway*.
+            - **Windows**: `Autotiler_*_x64-setup.exe` (or the `.msi`).
+            - **Linux**: `.AppImage`, `.deb` or `.rpm`.
+            - **No install**: the web version at https://itsjavi.com/autotiler/
+        run: |
+          tag="v$(jq -r .version package.json)"
+          # a re-run reuses the draft of the same version
+          id=$(gh api "repos/$GITHUB_REPOSITORY/releases" \
+            --jq "map(select(.draft and .tag_name == \"$tag\")) | first | .id // empty")
+          if [ -z "$id" ]; then
+            id=$(gh api "repos/$GITHUB_REPOSITORY/releases" -f tag_name="$tag" -f target_commitish="$GITHUB_SHA" \
+              -f name="Autotiler $tag" -f body="$BODY" -F draft=true --jq .id)
+          fi
+          echo "id=$id" >> "$GITHUB_OUTPUT"
+
   desktop:
+    needs: draft
     strategy:
       fail-fast: false
       matrix:
@@ -54,17 +86,6 @@ jobs:
           # secrets to sign and notarize instead: APPLE_CERTIFICATE, APPLE_CERTIFICATE_PASSWORD,
           # APPLE_SIGNING_IDENTITY, APPLE_API_ISSUER, APPLE_API_KEY, APPLE_API_KEY_PATH.
         with:
-          tagName: v__VERSION__
-          releaseName: Autotiler v__VERSION__
-          releaseBody: |
-            See [CHANGELOG.md](https://github.com/itsjavi/autotiler/blob/main/CHANGELOG.md) for what's new.
-
-            - **macOS** (Apple Silicon and Intel, macOS 13+): `Autotiler_*_universal.dmg`. The app isn't notarized:
-              the first time, open it, then allow it in *System Settings → Privacy & Security → Open Anyway*.
-            - **Windows**: `Autotiler_*_x64-setup.exe` (or the `.msi`).
-            - **Linux**: `.AppImage`, `.deb` or `.rpm`.
-            - **No install**: the web version at https://itsjavi.com/autotiler/
-          releaseDraft: true
-          prerelease: false
+          releaseId: ${{ needs.draft.outputs.id }}
           uploadUpdaterJson: false
           args: ${{ matrix.args }}

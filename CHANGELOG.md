@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0 (unreleased)
+## 2.0.0 (2026-09-26)
 
 A rewrite from scratch: a TypeScript engine with tests, a new UI, a small native desktop app and a web version.
 
